@@ -54,12 +54,15 @@ export interface BskyPost {
   replyCount: number;
   repostCount: number;
   likeCount: number;
+  quoteCount: number;
   images: BskyImage[];
   external?: BskyExternal;
   /** 인용 리포스트인 경우, 인용된 원본 글 */
   quote?: BskyQuote;
   /** 리포스트인 경우, 리포스트한 사람 */
   repostedBy?: BskyAuthor;
+  /** 리포스트인 경우, 리포스트된 시각(reason.indexedAt). 정렬·필터 기준. */
+  repostedAt?: string;
   /** bsky.app 웹 퍼머링크 */
   url: string;
 }
@@ -98,21 +101,25 @@ interface RawEmbed {
   media?: { $type?: string; images?: RawImageView[]; external?: RawExternalView };
 }
 
+interface RawPost {
+  uri: string;
+  cid: string;
+  author: BskyAuthor;
+  record: { text?: string; createdAt?: string };
+  embed?: RawEmbed;
+  replyCount?: number;
+  repostCount?: number;
+  likeCount?: number;
+  quoteCount?: number;
+  indexedAt?: string;
+}
+
 interface RawFeedItem {
-  post: {
-    uri: string;
-    cid: string;
-    author: BskyAuthor;
-    record: { text?: string; createdAt?: string };
-    embed?: RawEmbed;
-    replyCount?: number;
-    repostCount?: number;
-    likeCount?: number;
-    indexedAt?: string;
-  };
+  post: RawPost;
   reason?: {
     $type: string;
     by?: BskyAuthor;
+    indexedAt?: string;
   };
 }
 
@@ -149,8 +156,8 @@ function mapQuote(rec?: RawViewRecord): BskyQuote | undefined {
   };
 }
 
-function normalize(item: RawFeedItem): BskyPost {
-  const { post, reason } = item;
+/** 단일 post 뷰(피드 아이템·스레드 노드 공통)를 BskyPost로 변환 */
+function normalizePost(post: RawPost): BskyPost {
   const embed = post.embed;
   const isRecordWithMedia = !!embed?.$type?.includes('recordWithMedia');
 
@@ -163,8 +170,6 @@ function normalize(item: RawFeedItem): BskyPost {
   const quoteRecord = isRecordWithMedia ? embed?.record?.record : embed?.record;
   const quote = embed?.$type?.includes('embed.record') ? mapQuote(quoteRecord) : undefined;
 
-  const repostedBy = reason?.$type?.includes('reasonRepost') ? reason.by : undefined;
-
   return {
     uri: post.uri,
     cid: post.cid,
@@ -174,11 +179,21 @@ function normalize(item: RawFeedItem): BskyPost {
     replyCount: post.replyCount ?? 0,
     repostCount: post.repostCount ?? 0,
     likeCount: post.likeCount ?? 0,
+    quoteCount: post.quoteCount ?? 0,
     images,
     external,
     quote,
-    repostedBy,
     url: postUrl(post.uri, post.author.handle),
+  };
+}
+
+function normalize(item: RawFeedItem): BskyPost {
+  const { post, reason } = item;
+  const isRepost = !!reason?.$type?.includes('reasonRepost');
+  return {
+    ...normalizePost(post),
+    repostedBy: isRepost ? reason?.by : undefined,
+    repostedAt: isRepost ? reason?.indexedAt : undefined,
   };
 }
 
@@ -223,6 +238,44 @@ export async function getListMembers(listUri: string, limit = 50, signal?: Abort
   if (!res.ok) throw new Error(`getList failed: ${res.status}`);
   const data = (await res.json()) as ListResponse;
   return data.items.map((i) => i.subject);
+}
+
+/** 스레드 트리의 한 노드: 글 + 그 글에 달린 답글들 */
+export interface BskyThreadNode {
+  post: BskyPost;
+  replies: BskyThreadNode[];
+}
+
+/** app.bsky.feed.defs#threadViewPost */
+interface RawThreadView {
+  $type?: string;
+  post?: RawPost;
+  replies?: RawThreadView[];
+}
+
+function mapThread(node?: RawThreadView): BskyThreadNode | undefined {
+  // notFound / blocked 노드는 post가 없으므로 건너뜀
+  if (!node?.post) return undefined;
+  const replies = (node.replies ?? [])
+    .map(mapThread)
+    .filter((r): r is BskyThreadNode => r !== undefined)
+    // 답글은 오래된 순(작성 시각 오름차순)으로 — 대화 흐름대로
+    .sort((a, b) => new Date(a.post.createdAt).getTime() - new Date(b.post.createdAt).getTime());
+  return { post: normalizePost(node.post), replies };
+}
+
+/**
+ * 한 글의 스레드(원본 글 + 답글 트리)를 가져온다.
+ * @param uri 글의 at:// URI
+ */
+export async function getPostThread(uri: string, signal?: AbortSignal): Promise<BskyThreadNode> {
+  const url = `${APPVIEW}/app.bsky.feed.getPostThread?uri=${encodeURIComponent(uri)}&depth=6&parentHeight=0`;
+  const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error(`getPostThread failed: ${res.status}`);
+  const data = (await res.json()) as { thread: RawThreadView };
+  const root = mapThread(data.thread);
+  if (!root) throw new Error('thread not found');
+  return root;
 }
 
 /** 단일 계정 피드 (List 안 쓸 때) */
