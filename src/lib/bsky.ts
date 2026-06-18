@@ -35,6 +35,15 @@ export interface BskyExternal {
   thumb?: string;
 }
 
+/** 인용 리포스트(quote post)에 인용된 원본 글 */
+export interface BskyQuote {
+  author: BskyAuthor;
+  text: string;
+  images: BskyImage[];
+  /** bsky.app 웹 퍼머링크 */
+  url: string;
+}
+
 export interface BskyPost {
   /** at:// URI */
   uri: string;
@@ -47,10 +56,46 @@ export interface BskyPost {
   likeCount: number;
   images: BskyImage[];
   external?: BskyExternal;
+  /** 인용 리포스트인 경우, 인용된 원본 글 */
+  quote?: BskyQuote;
   /** 리포스트인 경우, 리포스트한 사람 */
   repostedBy?: BskyAuthor;
   /** bsky.app 웹 퍼머링크 */
   url: string;
+}
+
+interface RawImageView {
+  thumb: string;
+  fullsize: string;
+  alt?: string;
+}
+
+interface RawExternalView {
+  uri: string;
+  title: string;
+  description: string;
+  thumb?: string;
+}
+
+/** app.bsky.embed.record#viewRecord — 인용된 원본 글의 뷰 */
+interface RawViewRecord {
+  $type?: string;
+  uri?: string;
+  cid?: string;
+  author?: BskyAuthor;
+  value?: { text?: string; createdAt?: string };
+  /** 인용된 글 자신의 임베드(이미지 등) */
+  embeds?: RawEmbed[];
+}
+
+interface RawEmbed {
+  $type: string;
+  images?: RawImageView[];
+  external?: RawExternalView;
+  /** record#view → viewRecord, recordWithMedia#view → record#view */
+  record?: RawViewRecord & { record?: RawViewRecord };
+  /** recordWithMedia#view의 미디어 파트 */
+  media?: { $type?: string; images?: RawImageView[]; external?: RawExternalView };
 }
 
 interface RawFeedItem {
@@ -59,11 +104,7 @@ interface RawFeedItem {
     cid: string;
     author: BskyAuthor;
     record: { text?: string; createdAt?: string };
-    embed?: {
-      $type: string;
-      images?: { thumb: string; fullsize: string; alt: string }[];
-      external?: { uri: string; title: string; description: string; thumb?: string };
-    };
+    embed?: RawEmbed;
     replyCount?: number;
     repostCount?: number;
     likeCount?: number;
@@ -86,26 +127,41 @@ function postUrl(uri: string, handle: string): string {
   return `https://bsky.app/profile/${handle}/post/${rkey}`;
 }
 
+function mapImages(raw?: RawImageView[]): BskyImage[] {
+  return raw?.map((i) => ({ thumb: i.thumb, fullsize: i.fullsize, alt: i.alt ?? '' })) ?? [];
+}
+
+function mapExternal(raw?: RawExternalView): BskyExternal | undefined {
+  return raw ? { uri: raw.uri, title: raw.title, description: raw.description, thumb: raw.thumb } : undefined;
+}
+
+/** 인용된 원본 글(viewRecord)을 BskyQuote로 변환 */
+function mapQuote(rec?: RawViewRecord): BskyQuote | undefined {
+  // viewNotFound / viewBlocked 등은 author·value가 없으므로 건너뜀
+  if (!rec?.author || !rec.uri) return undefined;
+  // 인용된 글 자신의 이미지(첫 images#view 임베드에서)
+  const innerImages = rec.embeds?.flatMap((e) => mapImages(e.images ?? e.media?.images)) ?? [];
+  return {
+    author: rec.author,
+    text: rec.value?.text ?? '',
+    images: innerImages,
+    url: postUrl(rec.uri, rec.author.handle),
+  };
+}
+
 function normalize(item: RawFeedItem): BskyPost {
   const { post, reason } = item;
   const embed = post.embed;
+  const isRecordWithMedia = !!embed?.$type?.includes('recordWithMedia');
 
-  // 이미지 임베드($type: app.bsky.embed.images#view 또는 recordWithMedia)
-  const images: BskyImage[] =
-    embed?.images?.map((i) => ({
-      thumb: i.thumb,
-      fullsize: i.fullsize,
-      alt: i.alt ?? '',
-    })) ?? [];
+  // 미디어: recordWithMedia면 embed.media에, 그 외엔 embed에 직접 붙는다.
+  const mediaSource = isRecordWithMedia ? embed?.media : embed;
+  const images = mapImages(mediaSource?.images);
+  const external = mapExternal(mediaSource?.external);
 
-  const external: BskyExternal | undefined = embed?.external
-    ? {
-        uri: embed.external.uri,
-        title: embed.external.title,
-        description: embed.external.description,
-        thumb: embed.external.thumb,
-      }
-    : undefined;
+  // 인용 글: recordWithMedia면 embed.record.record(=viewRecord), record#view면 embed.record가 viewRecord.
+  const quoteRecord = isRecordWithMedia ? embed?.record?.record : embed?.record;
+  const quote = embed?.$type?.includes('embed.record') ? mapQuote(quoteRecord) : undefined;
 
   const repostedBy = reason?.$type?.includes('reasonRepost') ? reason.by : undefined;
 
@@ -120,6 +176,7 @@ function normalize(item: RawFeedItem): BskyPost {
     likeCount: post.likeCount ?? 0,
     images,
     external,
+    quote,
     repostedBy,
     url: postUrl(post.uri, post.author.handle),
   };
@@ -144,6 +201,28 @@ export async function getListFeed(listUri: string, limit = 30, signal?: AbortSig
   if (!res.ok) throw new Error(`getListFeed failed: ${res.status}`);
   const data = (await res.json()) as FeedResponse;
   return data.feed.map(normalize);
+}
+
+interface RawListItem {
+  subject: BskyAuthor;
+}
+
+interface ListResponse {
+  list: { uri: string; name: string };
+  items: RawListItem[];
+  cursor?: string;
+}
+
+/**
+ * List에 속한 멤버(팔로우 대상)들을 가져온다.
+ * @param listUri at://<did>/app.bsky.graph.list/<rkey>
+ */
+export async function getListMembers(listUri: string, limit = 50, signal?: AbortSignal): Promise<BskyAuthor[]> {
+  const url = `${APPVIEW}/app.bsky.graph.getList?list=${encodeURIComponent(listUri)}&limit=${limit}`;
+  const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error(`getList failed: ${res.status}`);
+  const data = (await res.json()) as ListResponse;
+  return data.items.map((i) => i.subject);
 }
 
 /** 단일 계정 피드 (List 안 쓸 때) */
