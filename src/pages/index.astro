@@ -334,7 +334,7 @@ const editorFiles = editorPosts.map((post) => {
     }
   </style>
   <script is:inline>
-    (() => {
+    const initHeroEditor = () => {
       const root = document.getElementById("hero-editor");
       if (!root) return;
       const btns = root.querySelectorAll("[data-file-btn]");
@@ -442,6 +442,10 @@ const editorFiles = editorPosts.map((post) => {
           play(firstPane);
         }
       }
-    })();
+    };
+
+    // Re-run on every view-transition navigation (not just the first load),
+    // since ClientRouter swaps the DOM without re-executing inline scripts.
+    document.addEventListener("astro:page-load", initHeroEditor);
   </script>
 </Layout>
