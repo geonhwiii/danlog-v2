@@ -26,13 +26,13 @@ React 공식 문서는 RSC를 이렇게 정의합니다.
 
   빌드/요청 시점         SSR 시점              클라이언트
 ┌─────────────┐      ┌─────────────┐      ┌────────────┐
-│ RSC         │  →   │ SSR         │  →   │ Hydration  │
+│ RSC         │  ->  │ SSR         │  ->  │ Hydration  │
 │ Environment │      │ Environment │      │            │
 └─────────────┘      └─────────────┘      └────────────┘
       ↓                    ↓                    ↓
-  DB/파일 직접       RSC Payload +         Client Component
-  접근 가능          Client Component      만 hydrate
-                     → HTML 생성
+  DB/파일 직접         RSC Payload +         Client Component만
+  접근 가능            Client Component      hydrate
+                     -> HTML 생성
 ```
 
 이 흐름은 [Next.js 공식 문서](https://nextjs.org/docs/app/getting-started/server-and-client-components#how-do-server-and-client-components-work-in-nextjs)에 명시되어 있습니다.
@@ -382,19 +382,19 @@ RSC는 다음과 같은 페인 포인트를 정조준하는 도구입니다.
 
 ① 무거운 라이브러리를 클라이언트로 보내고 싶지 않다
 예: marked, sanitize-html, syntax highlighter
-→ Server Component에서 렌더링하면 번들에 포함 안 됨
+-> Server Component에서 렌더링하면 번들에 포함 안 됨
 
 ② API Route를 만들고 싶지 않다
 예: 단순히 DB 조회 결과를 보여주는 페이지
-→ 컴포넌트 안에서 직접 await db.query()
+-> 컴포넌트 안에서 직접 await db.query()
 
 ③ 클라이언트-서버 워터폴을 없애고 싶다
-예: Note 데이터 fetch → render → Author fetch → render
-→ 서버에서 한 번에 처리, 클라이언트로는 결과만
+예: Note 데이터 fetch -> render -> Author fetch -> render
+-> 서버에서 한 번에 처리, 클라이언트로는 결과만
 
 ④ Granular Loading: 인터랙티브한 부분의 JS만 내려보내고 싶다
 예: 100개 위젯 중 5개만 'use client'
-→ 나머지 95개의 코드는 클라이언트로 안 감
+-> 나머지 95개의 코드는 클라이언트로 안 감
 ```
 
 반대로, RSC가 큰 이득을 주지 못하는 경우도 분명합니다.
@@ -422,9 +422,9 @@ RSC는 다음과 같은 페인 포인트를 정조준하는 도구입니다.
 RSC = 번들링 전, SSR과도 분리된 환경에서 미리 렌더링되는 컴포넌트
 └─ 출력은 HTML이 아닌 RSC Payload (직렬화된 트리)
 
-Server Component → 기본값, JS 번들 X, async/await 가능, useState 불가
-Client Component → 'use client', JS 번들 O, SSR도 됨, hydration 됨
-SSR → RSC Payload + Client Component → HTML
+Server Component -> 기본값, JS 번들 X, async/await 가능, useState 불가
+Client Component -> 'use client', JS 번들 O, SSR도 됨, hydration 됨
+SSR -> RSC Payload + Client Component -> HTML
 
 핵심 제약
 · Client → Server import 불가 (children prop은 OK)
