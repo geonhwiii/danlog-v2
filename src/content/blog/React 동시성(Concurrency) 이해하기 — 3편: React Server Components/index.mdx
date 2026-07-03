@@ -24,15 +24,15 @@ React 공식 문서는 RSC를 이렇게 정의합니다.
 ```md
 [3가지 환경 구분]
 
-빌드/요청 시점 SSR 시점 클라이언트
-┌─────────────┐ ┌─────────────┐ ┌────────────┐
-│ RSC │→│ SSR │→│ Hydration │
-│ Environment │ │ Environment │ │ │
-└─────────────┘ └─────────────┘ └────────────┘
-↓ ↓ ↓
-DB/파일 직접 RSC Payload + Client Component
-접근 가능 Client Component 만 hydrate
-→ HTML 생성
+  빌드/요청 시점         SSR 시점              클라이언트
+┌─────────────┐      ┌─────────────┐      ┌────────────┐
+│ RSC         │  →   │ SSR         │  →   │ Hydration  │
+│ Environment │      │ Environment │      │            │
+└─────────────┘      └─────────────┘      └────────────┘
+      ↓                    ↓                    ↓
+  DB/파일 직접       RSC Payload +         Client Component
+  접근 가능          Client Component      만 hydrate
+                     → HTML 생성
 ```
 
 이 흐름은 [Next.js 공식 문서](https://nextjs.org/docs/app/getting-started/server-and-client-components#how-do-server-and-client-components-work-in-nextjs)에 명시되어 있습니다.
@@ -166,29 +166,29 @@ export default function LikeButton({ likes }: { likes: number }) {
 [App Router + RSC 흐름]
 
 브라우저 GET /post/123
-↓
+   ↓
 서버 RSC 렌더링 시작
 ├─ Page (Server Component)
 │ └─ await getPost(123) ← DB 직접 호출
 │
 ├─ <h1>, <p>는 그대로 평가
 └─ <LikeButton>은 placeholder + likes prop으로 직렬화
-↓
+   ↓
 서버 RSC Payload 생성
 └─ "Page 트리 = [h1, p, ClientRef('LikeButton', {likes: 42})]"
-↓
+   ↓
 서버 RSC Payload + Client Component를 SSR로 합쳐 HTML 생성
 └─ Suspense boundary 단위로 chunk 스트리밍 (2편 내용)
-↓
+   ↓
 브라우저 HTML 즉시 표시 (non-interactive)
-↓
+   ↓
 브라우저 Client Component JS 번들 로드
 └─ LikeButton.js만 로드 (Page.tsx, getPost는 안 옴)
-↓
+   ↓
 브라우저 RSC Payload로 트리 재구성 + hydration
 └─ Server Component 부분: HTML 그대로 인정
 └─ Client Component 부분: hydrate
-↓
+   ↓
 인터랙션 가능
 ```
 

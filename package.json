@@ -47,7 +47,7 @@
       "oxlint --fix",
       "oxfmt"
     ],
-    "*.{json,md,mdx,css,html}": "oxfmt"
+    "*.{json,css,html}": "oxfmt"
   },
   "engines": {
     "node": ">=22.0.0"

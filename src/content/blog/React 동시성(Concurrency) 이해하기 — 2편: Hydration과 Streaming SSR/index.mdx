@@ -586,7 +586,7 @@ Streaming SSR로 병목 1을 풀었습니다. 그런데 hydration에도 병목�
 [React 17]
 
 ┌──────────────────────────────────────────────┐
-│ Hydrate entire tree (sync, all at once) │ ← main thread blocked
+│ Hydrate entire tree (sync, all at once)      │ ← main thread blocked
 └──────────────────────────────────────────────┘
 ↓
 interactive
@@ -614,17 +614,17 @@ Selective Hydration은 `<Suspense>`로 감싼 영역에만 적용됩니다.
 [React 18 — Selective Hydration]
 
 ┌──────────┐ ┌──────────┐
-│ Comments │ │ Sidebar │
+│ Comments │ │ Sidebar  │
 └──────────┘ └──────────┘
-│ │
-JS pending JS ready
-↓
-hydrated ← Comments보다 먼저
-interactive
-│
-JS ready
-↓
-hydrated
+     │            │
+  JS pending   JS ready
+                  ↓
+               hydrated ← Comments보다 먼저
+              interactive
+     │
+  JS ready
+     ↓
+  hydrated
 interactive
 ```
 
@@ -641,17 +641,17 @@ Sidebar: hydrating 중
 Comments: hydration 대기 중
 
 사용자가 Comments 영역 클릭!
-↓
+        ↓
 root의 capture phase 리스너가 이벤트 감지
-↓
+        ↓
 React: "클릭된 노드가 Comments boundary 안에 있네"
-↓
+        ↓
 Sidebar hydration 잠깐 중단
-↓
+        ↓
 Comments 먼저 synchronous hydrate ← Concurrent Mode가 가능하게 함
-↓
+        ↓
 클릭 이벤트 정상 처리
-↓
+        ↓
 Sidebar hydration 재개
 ```
 
