@@ -17,7 +17,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' https://i.imgur.com/5xpqaqV.mp4 https://playfulprogramming.com/content/crutchcorn/posts/object-mutation/theme_toggle.mp4; connect-src 'self' https://public.api.bsky.app; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' https://i.imgur.com/5xpqaqV.mp4 https://playfulprogramming.com/content/crutchcorn/posts/object-mutation/theme_toggle.mp4 https://sepubya4pufkda5b.public.blob.vercel-storage.com; connect-src 'self' https://public.api.bsky.app; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         }
       ]
     }
