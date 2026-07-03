@@ -26,7 +26,7 @@ React 공식 문서는 RSC를 이렇게 정의합니다.
 
 빌드/요청 시점 SSR 시점 클라이언트
 ┌─────────────┐ ┌─────────────┐ ┌────────────┐
-│ RSC │ → │ SSR │ → │ Hydration │
+│ RSC │→│ SSR │→│ Hydration │
 │ Environment │ │ Environment │ │ │
 └─────────────┘ └─────────────┘ └────────────┘
 ↓ ↓ ↓
@@ -201,16 +201,15 @@ export default function LikeButton({ likes }: { likes: number }) {
 ## 5. Server / Client / SSR의 관계 정리
 
 ```md
-[3가지 개념 비교]
+[Server Component / Client Component / SSR 비교]
 
-                  Server Component   Client Component        SSR
-                  ─────────────────  ─────────────────  ─────────────
-
-실행 시점 서버 (요청 시) 서버 + 브라우저 서버 (요청 시)
-JS 번들 포함 ❌ ✅ (해당 없음)
-useState 사용 ❌ ✅ (해당 없음)
-DB 직접 접근 ✅ ❌ (해당 없음)
-출력 RSC Payload JSX HTML
+| 구분              | Server Component           | Client Component     | SSR (서버 사이드 렌더링) |
+| ----------------- | -------------------------- | -------------------- | ------------------------ |
+| **실행 시점**     | 서버(요청 시)              | 서버 + 브라우저      | 서버(요청 시)            |
+| **JS 번들 포함**  | ❌ (브라우저로 전송 안 함) | ✅ (브라우저로 전송) | (해당 없음)              |
+| **useState 사용** | ❌                         | ✅                   | (해당 없음)              |
+| **DB 직접 접근**  | ✅                         | ❌                   | (해당 없음)              |
+| **출력**          | RSC Payload                | JSX                  | HTML                     |
 ```
 
 핵심 포인트:
@@ -270,7 +269,7 @@ export default function Page() {
 
 Page (Server)
 ├─ <Cart /> 평가 → Server Component, RSC Payload에 포함
-└─ <Modal> → Client Component placeholder
+├─ <Modal> → Client Component placeholder
 └─ children prop = 위에서 평가된 <Cart /> 결과
 
 브라우저:

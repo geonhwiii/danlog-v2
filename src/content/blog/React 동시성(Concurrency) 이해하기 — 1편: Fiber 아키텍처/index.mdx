@@ -101,7 +101,7 @@ React의 렌더링은 내부적으로 세 단계로 나뉩니다.
 Render Reconcile Commit
 ┌──────────┐ ┌─────────────┐ ┌───────────┐
 │ JSX → │ │ Prev Tree │ │ Changes │
-│ React │→ │ vs │→ │ Reflected │
+│ React │→│ vs │→│ Reflected │
 │ Element │ │ New Tree │ │ in DOM │
 └──────────┘ └─────────────┘ └───────────┘
 (객체 생성) (변경점 파악) (DOM 업데이트)
@@ -200,7 +200,7 @@ startTransition(() => {
 
 ┌──────────────────────────┐ ┌──────────────────┐
 │ Render (5ms) │ │ │
-│ Input (2ms) │ → │ Responsive and │
+│ Input (2ms) │→│ Responsive and │
 │ Render (5ms) │ │ smooth UI! │
 │ Input (2ms) │ │ │
 │ ... │ └──────────────────┘
