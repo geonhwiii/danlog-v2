@@ -4,9 +4,23 @@
 
 🔗 https://danlog.vercel.app
 
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
+[![MotionScore](https://api.motion.dev/score/badge?url=danlog.vercel.app)](https://score.motion.dev/site/danlog.vercel.app)
+[![Pagespeed](https://img.shields.io/badge/pagespeed-100-brightgreen)](https://pagespeed.web.dev/analysis?url=https://danlog.vercel.app)
+
 ## Lighthouse
 
 <img src="docs/lighthouse-score.png" alt="Lighthouse 점수 — Performance 100, Accessibility 100, Best Practices 100, SEO 100" width="600" />
+
+## Motion
+
+<img src="https://i.imgur.com/XLWzgLw.png" alt="Motion Score S" width="600" />
+
+
 
 ## 기술 스택
 
