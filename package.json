@@ -13,30 +13,30 @@
     "fmt:fix": "oxfmt src"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.2.0",
-    "@astrojs/mdx": "7.0.0",
-    "@astrojs/react": "6.0.0",
-    "@astrojs/rss": "^4.0.18",
+    "@astrojs/markdown-remark": "^7.2.1",
+    "@astrojs/mdx": "7.0.3",
+    "@astrojs/react": "6.0.1",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/react": "^19.2.15",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "astro": "7.0.0",
+    "astro": "7.1.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "lucide-react": "^1.17.0",
+    "lucide-react": "^1.25.0",
     "overlay-kit": "^1.9.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "nano-staged": "^1.0.2",
-    "oxfmt": "^0.52.0",
+    "oxfmt": "^0.59.0",
     "oxlint": "^1.67.0",
-    "rehype-pretty-code": "^0.14.3",
-    "shiki": "^4.1.0",
+    "rehype-pretty-code": "^0.14.4",
+    "shiki": "^4.3.1",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {
@@ -50,6 +50,6 @@
     "*.{json,css,html}": "oxfmt"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.12.0"
   }
 }
