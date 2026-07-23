@@ -1,0 +1,257 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const posts = (await getCollection("translation", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric" })
+    .format(d)
+    .toUpperCase();
+
+// Feed rows read like a timeline post: source domain stands in for the
+// "handle", so each row gets an avatar-style initial badge derived from it.
+const hostOf = (url: string | undefined) => {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+};
+
+const rows = posts.map((post) => {
+  const host = hostOf(post.data.source);
+  return {
+    post,
+    host,
+    initial: (host ?? "번").slice(0, 1).toUpperCase(),
+  };
+});
+
+// ── Right rail data ──────────────────────────────────────────────
+const recent = rows.slice(0, 4);
+
+const tagCounts = new Map<string, number>();
+for (const { post } of rows) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const topTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+const hostCounts = new Map<string, number>();
+for (const { host } of rows) {
+  if (!host) continue;
+  hostCounts.set(host, (hostCounts.get(host) ?? 0) + 1);
+}
+const topHosts = [...hostCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+---
+
+<Layout title="번역" description="여기저기서 읽은 글을 옮겨온 기록.">
+  <section class="container-page pt-section pb-section">
+    <header class="mb-10">
+      <h1 class="display-lg">번역</h1>
+      <p class="body-md mt-3 text-body">학습 및 공유를 위한 번역 글입니다. 주로 개발과 관련된 글을 다룹니다.</p>
+    </header>
+
+    {
+      rows.length === 0 ? (
+        <p class="body-md text-muted">아직 번역한 글이 없습니다.</p>
+      ) : (
+        <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-12">
+          <!-- ─────────────────── Feed ─────────────────── -->
+          <div class="border-t border-hairline">
+            {rows.map(({ post, host, initial }) => (
+              <a
+                href={`/translation/${post.id}`}
+                data-row
+                data-tags={post.data.tags.join(",")}
+                class="group flex gap-3 border-b border-hairline px-1 py-5 transition-colors hover:bg-surface-card sm:gap-4 sm:px-2"
+              >
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-strong text-[0.875rem] font-medium text-muted">
+                  {initial}
+                </span>
+
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span class="title-sm text-ink">{host ?? "번역"}</span>
+                    <span class="text-muted-soft">·</span>
+                    <span class="caption font-jetbrains text-muted">{fmt(post.data.date)}</span>
+                  </div>
+                  <h2 class="title-md mt-1 transition-colors group-hover:text-primary-text">
+                    {post.data.title}
+                  </h2>
+                  <p class="body-sm mt-1 line-clamp-2 text-body">{post.data.description}</p>
+
+                  {post.data.image && (
+                    <img
+                      src={post.data.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      class="mt-3 aspect-video w-full rounded-xl border border-hairline object-cover"
+                    />
+                  )}
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    {post.data.tags[0] && (
+                      <span class="caption-uppercase font-jetbrains rounded-pill bg-surface-strong px-2.5 py-1 text-muted">
+                        {post.data.tags[0]}
+                      </span>
+                    )}
+                    {post.data.source && (
+                      <span class="caption ml-auto inline-flex items-center gap-1 text-primary-text transition-colors group-hover:text-primary-active">
+                        원문 보기
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="M7 17 17 7M9 7h8v8"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <!-- ─────────────────── Right rail ─────────────────── -->
+          <aside class="mt-10 hidden space-y-4 lg:mt-0 lg:block">
+            <div class="sticky top-24 space-y-4">
+              <!-- Search -->
+              <button
+                type="button"
+                data-search-open
+                class="flex w-full items-center gap-2 rounded-full border border-hairline bg-canvas-soft px-4 py-2.5 text-muted transition-colors hover:border-hairline-strong"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6" />
+                  <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <span class="caption flex-1 text-left">번역 글 검색</span>
+                <kbd class="code-type rounded border border-hairline-strong bg-surface-card px-1.5 py-0.5 text-[0.6875rem] text-muted">
+                  ⌘K
+                </kbd>
+              </button>
+
+              <!-- Recent -->
+              {recent.length > 0 && (
+                <div class="rounded-xl border border-hairline bg-canvas-soft p-4">
+                  <h3 class="title-sm">최근 번역</h3>
+                  <ul class="mt-3">
+                    {recent.map(({ post, host }, i) => (
+                      <li class:list={["py-2.5", i > 0 && "border-t border-hairline"]}>
+                        <a href={`/translation/${post.id}`} class="group block">
+                          <div class="flex items-center gap-x-2">
+                            <span class="caption text-muted-soft">{host ?? "번역"}</span>
+                            <span class="text-muted-soft">·</span>
+                            <span class="caption font-jetbrains text-muted-soft">{fmt(post.data.date)}</span>
+                          </div>
+                          <p class="body-sm mt-0.5 line-clamp-2 font-medium text-ink transition-colors group-hover:text-primary-text">
+                            {post.data.title}
+                          </p>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <!-- Tags (client-side filter on the feed) -->
+              {topTags.length > 0 && (
+                <div class="rounded-xl border border-hairline bg-canvas-soft p-4">
+                  <h3 class="title-sm">태그</h3>
+                  <div class="mt-3 flex flex-wrap gap-1.5" data-tag-filter-group>
+                    <button
+                      type="button"
+                      data-tag-filter=""
+                      class="caption is-tag-active rounded-pill border border-hairline-strong bg-ink px-2.5 py-1 text-canvas transition-colors"
+                    >
+                      전체
+                    </button>
+                    {topTags.map(([tag, count]) => (
+                      <button
+                        type="button"
+                        data-tag-filter={tag}
+                        class="caption rounded-pill border border-hairline px-2.5 py-1 text-muted transition-colors hover:border-hairline-strong hover:text-ink"
+                      >
+                        {tag} <span class="text-muted-soft">{count}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <!-- Sources -->
+              {topHosts.length > 0 && (
+                <div class="rounded-xl border border-hairline bg-canvas-soft p-4">
+                  <h3 class="title-sm">주요 출처</h3>
+                  <ul class="mt-3">
+                    {topHosts.map(([host, count], i) => (
+                      <li class:list={["flex items-center gap-2.5 py-2.5", i > 0 && "border-t border-hairline"]}>
+                        <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-strong text-[0.75rem] font-medium text-muted">
+                          {host.slice(0, 1).toUpperCase()}
+                        </span>
+                        <a
+                          href={`https://${host}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="body-sm min-w-0 flex-1 truncate text-ink transition-colors hover:text-primary-text"
+                        >
+                          {host}
+                        </a>
+                        <span class="caption font-jetbrains text-muted-soft">{count}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<script>
+  // Tag chips filter the feed rows client-side (no route change). Re-bound
+  // on every view-transition navigation since translation/index re-renders.
+  function initTagFilter() {
+    const group = document.querySelector<HTMLElement>("[data-tag-filter-group]");
+    if (!group) return;
+
+    const chips = Array.from(group.querySelectorAll<HTMLButtonElement>("[data-tag-filter]"));
+    const rows = Array.from(document.querySelectorAll<HTMLElement>("[data-row]"));
+
+    group.addEventListener("click", (e) => {
+      const chip = (e.target as Element).closest<HTMLButtonElement>("[data-tag-filter]");
+      if (!chip) return;
+      const tag = chip.dataset.tagFilter ?? "";
+
+      chips.forEach((c) => {
+        const active = c === chip;
+        c.classList.toggle("is-tag-active", active);
+        c.classList.toggle("bg-ink", active);
+        c.classList.toggle("text-canvas", active);
+        c.classList.toggle("border-hairline-strong", active);
+        c.classList.toggle("text-muted", !active);
+        c.classList.toggle("border-hairline", !active);
+      });
+
+      rows.forEach((row) => {
+        const tags = (row.dataset.tags ?? "").split(",").filter(Boolean);
+        row.style.display = tag === "" || tags.includes(tag) ? "" : "none";
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initTagFilter);
+</script>

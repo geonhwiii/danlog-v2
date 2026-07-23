@@ -3,6 +3,7 @@ import { Command } from 'cmdk';
 
 type SearchEntry = {
   id: string;
+  href: string;
   title: string;
   description: string;
   tags: string[];
@@ -52,9 +53,9 @@ export default function SearchPalette({ isOpen, close }: Props) {
     };
   }, []);
 
-  function go(id: string) {
+  function go(href: string) {
     close();
-    window.location.href = `/blog/${id}`;
+    window.location.href = href;
   }
 
   return (
@@ -86,7 +87,7 @@ export default function SearchPalette({ isOpen, close }: Props) {
             key={entry.id}
             value={entry.title}
             keywords={entry.tags}
-            onSelect={() => go(entry.id)}
+            onSelect={() => go(entry.href)}
             className="search-palette__item"
           >
             <span className="search-palette__item-title title-sm">{entry.title}</span>

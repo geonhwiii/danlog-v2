@@ -102,9 +102,30 @@ const ogImageUrl = new URL("/og-image.png", Astro.site);
     <script>
       // React + overlay-kit + cmdk live behind this dynamic import, so they're
       // only fetched the first time search is invoked — keeping them out of the
-      // initial page bundle entirely.
+      // initial page bundle entirely. No other page statically renders a React
+      // island, so Vite's dev-mode Fast Refresh preamble never gets injected —
+      // without it, evaluating the first .tsx module throws
+      // `$RefreshSig$ is not defined`. Inject the preamble ourselves (dev-only;
+      // react-refresh is stripped from production builds) before the dynamic
+      // import below even starts, since ES module imports inside
+      // mountSearch.ts evaluate eagerly and would otherwise beat a fix placed
+      // inside it.
+      let reactRefreshReady = !import.meta.env.DEV;
+      async function ensureReactRefresh() {
+        if (reactRefreshReady) return;
+        const { injectIntoGlobalHook } = await import(/* @vite-ignore */ "/@react-refresh");
+        injectIntoGlobalHook(window);
+        (window as unknown as { $RefreshReg$: () => void }).$RefreshReg$ = () => {};
+        (
+          window as unknown as { $RefreshSig$: () => (type: unknown) => unknown }
+        ).$RefreshSig$ = () => (type) => type;
+        reactRefreshReady = true;
+      }
+
       function openSearch() {
-        import("../components/react/mountSearch.ts").then((m) => m.openSearch());
+        ensureReactRefresh().then(() =>
+          import("../components/react/mountSearch.ts").then((m) => m.openSearch()),
+        );
       }
 
       function onKey(e: KeyboardEvent) {
