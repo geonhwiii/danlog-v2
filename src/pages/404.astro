@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="페이지를 찾을 수 없음" description="요청하신 페이지를 찾을 수 없습니다.">
+  <section
+    class="container-page flex min-h-[70vh] flex-col items-center justify-center py-section text-center"
+  >
+    <div class="not-found-mark mb-8" aria-hidden="true">
+      <svg viewBox="0 0 100 100" width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+        <g fill="var(--color-primary)">
+          <path d="M50,50 L54.5,32 L50,8 L45.5,32 Z"></path>
+          <path d="M50,50 L53,40 L50,22 L47,40 Z" transform="rotate(45 50 50)"></path>
+          <path d="M50,50 L54.5,32 L50,8 L45.5,32 Z" transform="rotate(90 50 50)"></path>
+          <path d="M50,50 L53,40 L50,22 L47,40 Z" transform="rotate(135 50 50)"></path>
+          <path d="M50,50 L54.5,32 L50,8 L45.5,32 Z" transform="rotate(180 50 50)"></path>
+          <path d="M50,50 L53,40 L50,22 L47,40 Z" transform="rotate(225 50 50)"></path>
+          <path d="M50,50 L54.5,32 L50,8 L45.5,32 Z" transform="rotate(270 50 50)"></path>
+          <path d="M50,50 L53,40 L50,22 L47,40 Z" transform="rotate(315 50 50)"></path>
+        </g>
+      </svg>
+    </div>
+
+    <span class="caption-uppercase text-muted">404</span>
+    <h1 class="display-mega mt-4">이 페이지는 없어요</h1>
+    <p class="body-md mt-5 max-w-md text-balance text-body">
+      하지만 가장 흥미로운 글은<br />종종 예상치 못한 곳에서 시작되곤 하죠.
+    </p>
+
+    <a
+      href="/"
+      class="mt-9 inline-flex h-11 items-center gap-2 rounded-full bg-ink px-6 text-[0.9375rem] font-medium text-canvas transition-opacity hover:opacity-90"
+    >
+      단로그로 돌아가기
+    </a>
+  </section>
+</Layout>
+
+<style>
+  .not-found-mark svg {
+    animation: not-found-spin 40s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .not-found-mark svg {
+      animation: none;
+    }
+  }
+  @keyframes not-found-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
