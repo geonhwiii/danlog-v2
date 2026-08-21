@@ -1,12 +1,19 @@
 ---
 title: 'Agent Slack Bot 만들기 (feat. Chat SDK)'
 description: 'Chat SDK의 사용법과 이를 활용하여 Agent Slack Bot을 만들어봅니다'
+image: https://i.imgur.com/GARctrL.png
 date: '08 16 2026'
 tags:
   - AI
 ---
 
+![](https://i.imgur.com/GARctrL.png)
+
 Vercel에서 만든 `Chat SDK`를 간단하게 알아보고, 이를 활용해서 슬랙봇을 만들어보겠습니다. 이후 설명에 나오겠지만 어댑터 구조를 통해 디스코드나 팀즈에도 간단하게 적용할 수 있습니다.
+
+> 사용된 코드는 [Github](https://github.com/geonhwiii/slack-knowledge-bot)에서 확인할 수 있습니다.
+> 
+> 예제를 위해 만든 코드로, 실제 운영보다는 참고용으로 보시면 좋을 것 같습니다.
 
 <br />
 
@@ -472,7 +479,15 @@ export async function extractDraft(thread: SourceThread, options: ExtractOptions
 
 ## 실제 동작
 
-작성중
+![](https://i.imgur.com/KEyglvZ.png)
+
+위처럼 timeout 이슈가 발생했을 때, 기존 이슈를 확인하고 해당 스레드 링크를 제안해주는 것을 확인할 수 있습니다. (해당 이슈 발생 전, 예시로 timeout 이슈를 미리 생성해둔 상태입니다.)
+
+![](https://i.imgur.com/XvOPFv7.png)
+
+저장을 요청하면 `save` tool을 호출해서 정보와 링크를 함께 저장하는 것을 확인할 수 있습니다.
+
+실무에서 사용한다면, 추가로 Jira MCP, GitHub 등을 연동해서 티켓과 이슈까지 검색해서 관리하면 더 유용할 것 같습니다.
 
 ---
 
@@ -481,5 +496,3 @@ export async function extractDraft(thread: SourceThread, options: ExtractOptions
 1. [**Chat SDK 공식 문서**](https://chat-sdk.dev/docs/create-chat-sdk)
 
 2. [**The Complete Guide to Chat SDK**](https://vercel.com/kb/guide/the-complete-guide-to-chat-sdk)
-
-3. [**slack-knowledge-bot 저장소**](https://github.com/geonhwiii/slack-knowledge-bot)
