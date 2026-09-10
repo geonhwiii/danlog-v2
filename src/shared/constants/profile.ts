@@ -4,7 +4,7 @@ export const profile = {
   name: '정건휘',
   role: '프론트엔드 엔지니어',
   intro:
-    '요구사항을 기반으로 예측 가능한 인터페이스와 확장에 유연한 구조를 설계합니다. React의 선언적 모델과 TypeScript의 정적 타입을 적극 활용하며, 읽기 쉬운 코드와 더 나은 추상화를 고민합니다. 생산성을 높이는 도구와 새로운 기술 흐름에 관심을 가지고, 배운 것을 글과 책으로 공유하며 꾸준히 성장합니다.',
+    '요구사항을 기반으로 예측 가능한 인터페이스와 확장에 유연한 구조를 설계합니다. React의 선언적 모델과 TypeScript의 정적 타입을 적극 활용하며, 읽기 쉬운 코드와 더 나은 추상화를 고민합니다. 생산성을 높이는 도구와 새로운 기술 흐름에 관심을 가지고, 배운 것을 공유하고 책과 글을 통해 꾸준히 성장합니다.',
   githubUrl: 'https://github.com/geonhwiii',
 };
 
@@ -30,10 +30,36 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
+    company: 'kt 밀리의서재',
+    role: '프론트엔드 개발자',
+    period: '2026.09 — 재직 중',
+    current: true,
+    projects: [
+      {
+        name: '주요 업무 및 개선 활동',
+        summary: '온보딩 문서화, 보안 관리 개선 및 AI 개발 방식 공유',
+        highlights: [
+          {
+            title: '신규 입사자용 온보딩 자료 구축',
+            detail: '업무 파악 과정을 직접 문서화하여 신규 입사자를 위한 온보딩 자료를 구축했습니다.',
+          },
+          {
+            title: 'PAT 관리 문제 개선 및 보안 점검 가이드 공유',
+            detail:
+              '코드 내 PAT(Personal Access Token) 관리 문제를 발견해 폐기·재발급하고, 보안 점검 가이드를 공유했습니다.',
+          },
+          {
+            title: 'AI-Native SDLC 기반 intent 작성 방식 공유',
+            detail: 'Anthropic의 AI-Native SDLC 기반 intent 작성 방식을 사내 AI 스터디에 공유했습니다.',
+          },
+        ],
+      },
+    ],
+  },
+  {
     company: '스펙터',
     role: '프론트엔드 개발자',
-    period: '2023.03 — 재직 중 · 3년',
-    current: true,
+    period: '2023.03 — 2026.08',
     projects: [
       {
         name: '평판 조회 웹 서비스',
@@ -47,10 +73,6 @@ export const experiences: Experience[] = [
             title: 'pnpm + Turborepo 모노레포 직접 제안·설계',
             detail:
               '서비스 간 코드 중복과 모듈 분리 문제를 해결하고, 비슷한 UI의 신규 서비스를 패키지 재사용으로 2주 만에 개발·배포했습니다.',
-          },
-          {
-            title: 'SSR 환경에서 안정적으로 동작하는 국제화(i18n) 구현',
-            detail: '다국어 라이브러리를 도입해 SSR 환경에서도 끊김 없는 국제화 기능을 구현했습니다.',
           },
           {
             title: '확장 가능한 다단계 평판 작성 Form 시스템 설계',
@@ -70,11 +92,6 @@ export const experiences: Experience[] = [
         summary: '이력서·JD·평판·면접 분석 결과를 통합해 지원자를 종합 분석하는 B2B 플랫폼',
         highlights: [
           {
-            title: 'Web Worker를 활용한 정확한 브라우저 타이머 구현',
-            detail:
-              '백그라운드 탭 전환 시 타이머가 throttle되어 면접 녹음 시간이 부정확해지는 문제를, 타이머를 메인 스레드와 분리해 탭 상태와 무관하게 일정하게 유지되도록 개선했습니다.',
-          },
-          {
             title: 'URL·SearchParams·Form을 zod 스키마로 통합 관리',
             detail:
               '애플리케이션 전반의 사용자 입력을 단일 스키마로 관리하고, 잘못된 dynamic URL 접근을 스키마 검증으로 차단해 의도하지 않은 접근을 일관되게 처리했습니다.',
@@ -91,14 +108,14 @@ export const experiences: Experience[] = [
         summary: 'STT 기반 답변을 바탕으로 꼬리질문을 생성하는 AI 음성 면접 서비스',
         highlights: [
           {
-            title: '1개월 내 AI 음성 면접 서비스 단독 설계·개발·출시',
+            title: '1개월 내 AI 음성 면접 서비스 설계·개발·출시',
             detail:
               '기존 서비스를 모노레포로 전환하고 디자인 시스템을 재사용해 리소스를 최소화했으며, Tailwind CSS v4 기반 모노레포 디자인 시스템으로 서비스 간 UI 일관성을 확보했습니다.',
           },
           {
-            title: '백엔드 의존 없이 AI 음성 면접 기능 단독 구현',
+            title: '백엔드 의존 없이 AI 음성 면접 기능 설계 및 구현',
             detail:
-              'Vercel AI의 Provider로 OpenAI·Gemini 등 모델을 유연하게 교체 가능한 구조를 설계하고, Stream Output 스키마를 직접 설계해 응답을 안정적으로 파싱했습니다. STT·TTS는 별도 API 없이 Server Action으로 처리해 백엔드 리소스를 절감했습니다.',
+              'Vercel AI의 Provider로 OpenAI·Gemini 등 모델을 유연하게 교체 가능한 구조를 설계하고, Stream Output 스키마를 직접 설계해 응답을 안정적으로 파싱하고 다음 질문 전환 흐름을 제어했습니다. STT·TTS는 별도 API 엔드포인트 없이 Server Action으로 처리해 백엔드 리소스를 절감했습니다.',
           },
         ],
       },
@@ -130,6 +147,22 @@ export const experiences: Experience[] = [
             title: 'dev 서버 시작 시간 80% 감소, 빌드·배포 6분 → 2분 단축',
             detail:
               'API 및 디자인 시스템 문서화로 백엔드 개발자도 프론트엔드 기능을 추가할 수 있는 구조를 완성했습니다.',
+          },
+        ],
+      },
+      {
+        name: '프론트엔드 코드 품질 관리 체계 구축',
+        summary: 'AI 코드 생성으로 증가한 미사용 코드·의존성과 중복 품질 검사 관리 비용 개선',
+        highlights: [
+          {
+            title: 'Knip 도입으로 전체 코드 11% 감소 및 미사용 파일 157개 제거',
+            detail:
+              'ESLint·TypeScript 컴파일러로는 잡히지 않는 미사용 파일·exports·dependencies를 확인하고 제거했습니다.',
+          },
+          {
+            title: 'GitHub Actions 기반 품질 검사 자동화',
+            detail:
+              'ESLint, Prettier, Knip, Test를 하나의 워크플로우로 묶어 PR마다 자동 실행하고, 반복적인 수동 점검 없이 품질을 검증하도록 했습니다.',
           },
         ],
       },
@@ -193,5 +226,13 @@ export const education: Education[] = [
     period: '2026.01 — 2026.02 · 1개월',
     detail:
       '프론트엔드 전문가 코칭을 통해 설계 사고와 모듈화를 학습했습니다. 모듈화 원칙·리팩토링·전문가 패턴을 반복 학습하고, 페어코딩과 녹화 복기로 코딩 패턴을 개선하며 예측 가능하고 변경에 용이한 코드 작성 기준을 확립했습니다.',
+  },
+];
+
+export const certifications = [
+  {
+    name: '정보처리기사',
+    date: '2018.11.16',
+    issuer: '한국산업인력공단',
   },
 ];

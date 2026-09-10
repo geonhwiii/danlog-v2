@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { contactEmail, education, experiences, linkedInUrl, profile } from "@shared/constants";
+import { certifications, contactEmail, education, experiences, linkedInUrl, profile } from "@shared/constants";
 ---
 
 <Layout title="프로필" description={`${profile.name} · ${profile.role}`}>
@@ -117,6 +117,23 @@ import { contactEmail, education, experiences, linkedInUrl, profile } from "@sha
               <span class="code-type text-muted-soft">{e.period}</span>
             </div>
             <p class="body-sm mt-3 text-body">{e.detail}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+  <!-- ───────────────────────── Certifications ───────────────────────── -->
+  <section class="container-page pb-section">
+    <h2 class="display-lg">자격증</h2>
+    <div class="mt-8 max-w-3xl space-y-4">
+      {
+        certifications.map((certification) => (
+          <article class="rounded-lg border border-hairline bg-surface-card p-6">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="title-sm">{certification.name}</h3>
+              <span class="code-type text-muted-soft">{certification.date}</span>
+            </div>
+            <p class="body-sm mt-3 text-body">{certification.issuer}</p>
           </article>
         ))
       }
