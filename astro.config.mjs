@@ -19,7 +19,13 @@ const rehypePrettyCodeOptions = {
 // https://astro.build/config
 export default defineConfig({
   site: 'https://danlog.vercel.app',
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [
+    react(),
+    mdx(),
+    // Translations are excluded from the sitemap — they're other people's
+    // writing, and /translation/ is disallowed in robots.txt.
+    sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/translation') }),
+  ],
 
   markdown: {
     syntaxHighlight: false,

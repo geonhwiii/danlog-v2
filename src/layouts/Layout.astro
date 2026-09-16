@@ -7,11 +7,14 @@ import { ClientRouter } from "astro:transitions";
 interface Props {
   title?: string;
   description?: string;
+  /** Keep the page out of search indexes and AI crawlers (see robots.txt.ts). */
+  noindex?: boolean;
 }
 
 const {
   title = "단로그",
   description = "개발과 일상의 기록을 담는 개인 블로그",
+  noindex = false,
 } = Astro.props;
 
 const fullTitle = title === "단로그" ? "단로그" : `${title} · 단로그`;
@@ -54,6 +57,15 @@ const ogImageUrl = new URL("/og-image.png", Astro.site);
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+
+    {
+      noindex && (
+        <>
+          <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+          <meta name="googlebot" content="noindex, nofollow" />
+        </>
+      )
+    }
 
     {/* Open Graph */}
     <meta property="og:title" content={fullTitle} />
