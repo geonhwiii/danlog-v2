@@ -55,7 +55,7 @@ export default function SearchPalette({ isOpen, close }: Props) {
 
   function go(href: string) {
     close();
-    window.location.href = href;
+    window.location.assign(href);
   }
 
   return (

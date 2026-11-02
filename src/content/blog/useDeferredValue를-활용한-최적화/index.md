@@ -4,6 +4,7 @@ description: React의 useDeferredValue를 사용해서 최적화하는 방법을
 date: 10 08 2025
 tags:
   - React
+visible: false
 ---
 
 React앱을 개발하다보면 초기 16.8에 나왔던 훅을 제외하고는 잘 안쓰게 됩니다. (저의 경우엔)

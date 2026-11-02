@@ -6,6 +6,7 @@ image: 'https://knip.dev/og/docs.webp'
 tags:
   - Frontend
   - CI
+visible: false
 ---
 
 ![](https://knip.dev/og/docs.webp)

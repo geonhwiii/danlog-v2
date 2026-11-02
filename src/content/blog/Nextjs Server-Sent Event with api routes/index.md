@@ -4,6 +4,7 @@ description: nextjs에서 api routes로 SSE 연결
 date: 07 01 2024
 tags:
   - Next.js
+visible: false
 ---
 
 이번 회사 프로젝트에서 `nextjs`에서 `openai`와 같은 `stream api`를 연동을 하게 되었습니다.

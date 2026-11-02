@@ -4,6 +4,7 @@ description: '2025년 프론트엔드 개발자가 사용할만한 맥 어플리
 date: '03 02 2025'
 tags:
   - Journal
+visible: false
 ---
 
 2025년에 제가 가장 즐겨 사용하는 맥 어플리케이션을 정리해봅니다.

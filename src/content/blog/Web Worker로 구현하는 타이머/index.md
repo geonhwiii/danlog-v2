@@ -4,6 +4,7 @@ description: '탭 전환 시 타이머가 멈추는 문제를 Web Worker로 해�
 date: '09 01 2025'
 tags:
   - Web Worker
+visible: false
 ---
 
 ## 발생했던 이슈

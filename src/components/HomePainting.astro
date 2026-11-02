@@ -1,0 +1,110 @@
+---
+import { PAINTING_VIEWBOX, paintScene } from "@lib/painting/scene";
+
+// Generated once at build time; the page ships plain SVG and CSS, no JS.
+const { sky, clouds, land } = paintScene();
+const layer = (inner: string, className = "") =>
+  `<svg viewBox="${PAINTING_VIEWBOX}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"${className ? ` class="${className}"` : ""}>${inner}</svg>`;
+---
+
+<div class="painting">
+  <Fragment set:html={layer(sky) + layer(clouds, "painting-clouds") + layer(land)} />
+</div>
+
+<style is:global>
+  /* Wind blows only while the visitor hovers the painting (.home-visual). */
+  @property --painting-wind {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+  }
+  @property --painting-gust {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+  }
+
+  .painting {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+    transition: --painting-wind 1.6s ease-out;
+  }
+  .painting svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Paper grain and speckle over the whole painting. */
+  .painting::before,
+  .painting::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .painting::before {
+    mix-blend-mode: multiply;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 0 0.27 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+  .painting::after {
+    opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.98 0 0 0 0 0.93 0 0 0 9 -6.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  }
+
+  .painting-clouds {
+    overflow: visible;
+    animation: painting-drift 9s linear infinite alternate paused;
+  }
+  .painting-sway {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: painting-gust 3.2s ease-in-out infinite paused;
+  }
+  .painting-bush,
+  .painting-grass {
+    transform: skewX(calc(var(--painting-gust) * var(--painting-wind) * -2.5deg));
+  }
+  .painting-wheat {
+    transform: rotate(calc(var(--painting-gust) * var(--painting-wind) * 1.6deg));
+  }
+  .painting-leaf,
+  .painting-flower {
+    transform: rotate(calc(var(--painting-gust) * var(--painting-wind) * 1.2deg));
+  }
+
+  .home-visual:hover .painting {
+    --painting-wind: 1;
+    transition: --painting-wind 0.6s ease-out;
+  }
+  .home-visual:hover .painting-clouds,
+  .home-visual:hover .painting-sway {
+    animation-play-state: running;
+  }
+
+  @keyframes painting-gust {
+    0%,
+    100% {
+      --painting-gust: -0.4;
+    }
+    50% {
+      --painting-gust: 1;
+    }
+  }
+  @keyframes painting-drift {
+    to {
+      transform: translateX(-18px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .painting-clouds,
+    .painting-sway {
+      animation: none;
+    }
+  }
+</style>

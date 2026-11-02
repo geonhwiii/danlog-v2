@@ -5,6 +5,7 @@ image: https://i.imgur.com/GARctrL.png
 date: '08 16 2026'
 tags:
   - AI
+visible: false
 ---
 
 ![](https://i.imgur.com/GARctrL.png)

@@ -4,6 +4,7 @@ description: '두서없는 프론트엔드 개발자의 생각정리'
 date: '08 03 2025'
 tags:
   - Journal
+visible: false
 ---
 
 ## 이력서

@@ -4,6 +4,7 @@ description: '직접 구현하며 이해하는 Virtual DOM의 원리와 실제 �
 date: '07 17 2025'
 tags:
   - Journal
+visible: false
 ---
 
 직접 `가상 DOM(Virtual DOM)` 시스템을 구현하며 느낀 점과, 실제로 동작하는 구조를 정리해봅니다.

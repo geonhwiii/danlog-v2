@@ -4,6 +4,7 @@ description: 'Rust 언어를 모르는 상태에서 rusky를 만들고, vsCode �
 date: '05 27 2025'
 tags:
   - React Native
+visible: false
 ---
 
 최근에 `Cursor`를 사용해서 두 가지 프로젝트를 만들어보았습니다.

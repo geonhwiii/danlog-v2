@@ -4,6 +4,7 @@ description: 'React 19 beta 변경점'
 date: '05 20 2024'
 tags:
   - React
+visible: false
 ---
 
 > React 19가 beta로 출시되었습니다. 정식 버전이 출시 되기 전, 간단하게 정리해봅니다.
