@@ -7,6 +7,6 @@ import Footer from "../components/Footer.astro";
   <main class="mx-auto max-w-[648px] px-6 pt-[clamp(56px,10vw,104px)] pb-14">
     <h1 class="text-[28px] leading-[1.35] font-semibold text-ink">페이지를 찾을 수 없어요</h1>
     <p class="mt-6">주소가 바뀌었거나 숨겨진 글일 수 있어요. <a href="/">홈</a>에서 다른 글을 찾아보세요.</p>
-    <Footer back />
+    <Footer back={{ href: "/", label: "← 모든 글" }} />
   </main>
 </Layout>

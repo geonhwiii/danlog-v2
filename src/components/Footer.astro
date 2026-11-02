@@ -2,11 +2,11 @@
 import { site } from "@shared/constants";
 
 interface Props {
-  /** Show a "← 모든 글" link home instead of the copyright line. */
-  back?: boolean;
+  /** Show a back link (e.g. "← 모든 글") instead of the copyright line. */
+  back?: { href: string; label: string };
 }
 
-const { back = false } = Astro.props;
+const { back } = Astro.props;
 ---
 
 <footer
@@ -15,7 +15,17 @@ const { back = false } = Astro.props;
     back ? "mt-20 border-t border-hairline pt-5" : "mt-24",
   ]}
 >
-  {back ? <a href="/" class="quiet-link">← 모든 글</a> : <span>© {new Date().getFullYear()} {site.author}</span>}
+  {
+    back ? (
+      <a href={back.href} class="quiet-link">
+        {back.label}
+      </a>
+    ) : (
+      <span>
+        © {new Date().getFullYear()} {site.author}
+      </span>
+    )
+  }
   <span class="flex gap-4">
     <a href="/rss.xml">RSS</a>
     <a href={site.githubUrl}>GitHub</a>

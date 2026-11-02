@@ -68,3 +68,23 @@ tags: ['React', 'TypeScript']
 visible: true # false면 목록·라우트·RSS에서 숨김 (기본값 true)
 ---
 ```
+
+## X 글 추가
+
+X 글을 링크로 저장하고, 그 아래에 내 생각을 스레드처럼 남깁니다. 홈의 `X` 섹션과 `/x`에 보입니다.
+
+```bash
+bun run x:add https://x.com/<handle>/status/<id>
+```
+
+`src/content/x/<id>.md`에 원글 스냅샷(작성자, 본문, 이미지)이 저장됩니다. 원글이 지워져도 그대로 보입니다. 같은 파일의 `replies`에 내 생각을 적습니다:
+
+```yaml
+replies:
+  - date: 2026-11-02
+    text: '첫 번째 생각'
+  - date: 2026-11-03
+    text: '이어서 덧붙이는 생각'
+```
+
+답글이 없으면 목록에는 원글 본문이 보입니다. `visible: false`로 숨길 수 있습니다.

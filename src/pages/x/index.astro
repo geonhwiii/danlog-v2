@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../../components/Footer.astro";
+import XRow from "../../components/x/XRow.astro";
+import { getXEntries } from "@lib/x";
+
+const entries = await getXEntries();
+---
+
+<Layout title="X" description="X에서 읽고 생각한 것들.">
+  <main class="mx-auto max-w-[648px] px-6 pt-[clamp(40px,6vw,64px)] pb-14">
+    <h1 class="text-[36px] leading-tight font-semibold tracking-[-0.01em] text-ink">X</h1>
+    <p class="mt-6">X에서 읽고 생각한 것들을 남겨 둡니다.</p>
+
+    {
+      entries.length > 0 ? (
+        <ol class="mt-12 border-t border-hairline">
+          {entries.map((entry) => (
+            <XRow entry={entry} />
+          ))}
+        </ol>
+      ) : (
+        <p class="mt-12 border-t border-hairline pt-4 text-muted">아직 남긴 글이 없어요.</p>
+      )
+    }
+
+    <Footer back={{ href: "/", label: "← 홈" }} />
+  </main>
+</Layout>
