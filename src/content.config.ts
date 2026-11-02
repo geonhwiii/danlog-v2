@@ -29,4 +29,37 @@ const translation = defineCollection({
   }),
 });
 
-export const collections = { blog, translation };
+// X posts Dan keeps, with Dan's own replies underneath. `post` is a snapshot
+// saved by `bun run x:add` so a deleted or edited post still renders.
+const x = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/x' }),
+  schema: z.object({
+    date: z.coerce.date(),
+    post: z.object({
+      id: z.string(),
+      url: z.string().url(),
+      text: z.string(),
+      createdAt: z.coerce.date(),
+      author: z.object({
+        name: z.string(),
+        handle: z.string(),
+        avatar: z.string().url(),
+        verified: z.boolean().default(false),
+      }),
+      media: z
+        .array(
+          z.object({
+            type: z.enum(['photo', 'video']),
+            src: z.string().url(),
+            width: z.number(),
+            height: z.number(),
+          }),
+        )
+        .default([]),
+    }),
+    replies: z.array(z.object({ date: z.coerce.date(), text: z.string() })).default([]),
+    visible: z.boolean().default(true),
+  }),
+});
+
+export const collections = { blog, translation, x };

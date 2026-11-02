@@ -3,11 +3,14 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/Footer.astro";
 import HomePainting from "../components/HomePainting.astro";
+import XRow from "../components/x/XRow.astro";
 import { site } from "@shared/constants";
+import { getXEntries } from "@lib/x";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft && data.visible)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+const xEntries = await getXEntries();
 
 const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" }).format;
 ---
@@ -21,6 +24,26 @@ const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "
 
       <div class="mt-12 border-b border-hairline pb-2.5 font-sans text-sm leading-snug text-muted">소개</div>
       <p class="mt-6">{site.bio}</p>
+
+      {
+        xEntries.length > 0 && (
+          <section class="mt-20" aria-labelledby="x-heading">
+            <div class="mb-5 flex items-baseline justify-between">
+              <h2 id="x-heading" class="text-[24px] leading-snug font-semibold text-ink">
+                X
+              </h2>
+              <a href="/x" class="font-sans text-sm text-muted">
+                전체 보기
+              </a>
+            </div>
+            <ol class="border-t border-hairline">
+              {xEntries.slice(0, 3).map((entry) => (
+                <XRow entry={entry} />
+              ))}
+            </ol>
+          </section>
+        )
+      }
 
       <section class="mt-20" aria-labelledby="posts-heading">
         <h2 id="posts-heading" class="mb-5 text-[24px] leading-snug font-semibold text-ink">글</h2>

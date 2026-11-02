@@ -1,0 +1,25 @@
+---
+import type { XEntry } from "@lib/x";
+import { formatShortDate, summaryOf } from "@lib/x";
+import XLogo from "./XLogo.astro";
+
+interface Props {
+  entry: XEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<li class="border-b border-hairline">
+  <a href={`/x/${entry.id}`} class="group flex flex-col gap-1.5 py-3.5 text-ink no-underline">
+    <span class="line-clamp-2 leading-relaxed decoration-1 underline-offset-[0.26em] group-hover:underline">
+      {summaryOf(entry)}
+    </span>
+    <span class="flex items-center gap-1.5 font-sans text-[13px] leading-snug text-muted">
+      <XLogo size={11} />
+      <span>@{entry.data.post.author.handle}</span>
+      <span aria-hidden="true">·</span>
+      <time datetime={entry.data.date.toISOString()}>{formatShortDate(entry.data.date)}</time>
+    </span>
+  </a>
+</li>

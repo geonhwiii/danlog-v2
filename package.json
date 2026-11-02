@@ -10,7 +10,8 @@
     "lint": "oxlint src",
     "lint:fix": "oxlint --fix src",
     "fmt": "oxfmt --check src",
-    "fmt:fix": "oxfmt src"
+    "fmt:fix": "oxfmt src",
+    "x:add": "bun scripts/x-add.ts"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.5",
