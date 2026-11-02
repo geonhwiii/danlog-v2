@@ -1,0 +1,29 @@
+---
+interface Props {
+  href: string;
+  /** Accessible name — the arrow has no visible text. */
+  label: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label={label}
+  class="-ml-2.5 grid size-10 flex-none place-items-center rounded-full text-ink transition-colors hover:bg-surface-strong"
+>
+  <svg
+    aria-hidden="true"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M19 12H5M12 19l-7-7 7-7"></path>
+  </svg>
+</a>

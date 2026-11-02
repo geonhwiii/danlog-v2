@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import BackLink from "../../components/BackLink.astro";
 import Footer from "../../components/Footer.astro";
 import { site } from "@shared/constants";
 
@@ -18,8 +19,12 @@ const formattedDate = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month:
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-  <main class="mx-auto max-w-[648px] px-6 pt-[clamp(56px,10vw,104px)] pb-14">
-    <article>
+  <main class="mx-auto max-w-[648px] px-6 pt-[clamp(24px,5vw,48px)] pb-14">
+    <nav>
+      <BackLink href="/" label="모든 글로 돌아가기" />
+    </nav>
+
+    <article class="mt-[clamp(20px,5vw,48px)]">
       <header>
         <h1
           class="text-[clamp(24px,18px+1.6vw,28px)] leading-[1.35] font-semibold tracking-[-0.01em] text-balance text-ink"
