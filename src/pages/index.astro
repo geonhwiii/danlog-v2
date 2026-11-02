@@ -17,7 +17,7 @@ const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "
 
 <Layout>
   <div
-    class="mx-auto flex max-w-[1100px] items-start justify-center gap-[clamp(48px,9vw,120px)] px-6 pt-[clamp(40px,6vw,64px)] pb-14"
+    class="mx-auto flex max-w-[1200px] items-start justify-center gap-[clamp(48px,9vw,120px)] px-6 pt-[clamp(40px,6vw,64px)] pb-14"
   >
     <main class="min-w-0 flex-[0_1_600px]">
       <h1 class="text-[36px] leading-tight font-semibold tracking-[-0.01em] text-ink">{site.handle}</h1>
@@ -74,10 +74,10 @@ const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "
     </main>
 
     <aside
-      class="home-visual sticky top-[clamp(40px,6vw,64px)] hidden flex-[0_0_340px] min-[960px]:block"
+      class="home-visual sticky top-[clamp(40px,6vw,64px)] hidden flex-[0_0_clamp(340px,32vw,440px)] min-[960px]:block"
       aria-hidden="true"
     >
-      <div class="relative h-[650px] w-[340px] overflow-hidden rounded-[14px] border border-hairline bg-[#86b9e6]">
+      <div class="relative h-[clamp(650px,calc(100dvh-2*clamp(40px,6vw,64px)),880px)] w-full overflow-hidden rounded-[14px] border border-hairline bg-[#86b9e6]">
         <HomePainting />
       </div>
     </aside>
