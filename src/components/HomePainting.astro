@@ -58,7 +58,10 @@ const layer = (inner: string, className = "") =>
 
   .painting-clouds {
     overflow: visible;
-    animation: painting-drift 9s linear infinite alternate paused;
+  }
+  /* Clouds always drift, slowly and each at its own pace (see scene.ts). */
+  .painting-cloud {
+    animation: painting-drift var(--dur) ease-in-out var(--delay) infinite alternate;
   }
   .painting-sway {
     transform-box: fill-box;
@@ -81,7 +84,6 @@ const layer = (inner: string, className = "") =>
     --painting-wind: 1;
     transition: --painting-wind 0.6s ease-out;
   }
-  .home-visual:hover .painting-clouds,
   .home-visual:hover .painting-sway {
     animation-play-state: running;
   }
@@ -97,12 +99,12 @@ const layer = (inner: string, className = "") =>
   }
   @keyframes painting-drift {
     to {
-      transform: translateX(-18px);
+      transform: translateX(var(--drift));
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .painting-clouds,
+    .painting-cloud,
     .painting-sway {
       animation: none;
     }
