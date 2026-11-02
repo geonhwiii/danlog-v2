@@ -9,6 +9,7 @@ export const site = {
     '읽기 쉬운 코드, 더 나은 추상화에 대해 고민하며 코드를 작성합니다. ' +
     '생산성을 높이는 도구와 새로운 기술 흐름에 관심을 가지며, ' +
     '배운 것을 공유하고 책과 글을 통해 꾸준히 성장합니다.',
+  linkedinUrl: 'https://www.linkedin.com/in/gunwww/',
   githubUrl: 'https://github.com/geonhwiii',
   avatarUrl: 'https://github.com/geonhwiii.png?size=64',
 };
