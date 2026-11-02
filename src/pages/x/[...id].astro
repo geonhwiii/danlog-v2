@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import BackLink from "../../components/BackLink.astro";
 import Footer from "../../components/Footer.astro";
 import XThread from "../../components/x/XThread.astro";
 import { getXEntries, summaryOf, type XEntry } from "@lib/x";
@@ -20,25 +21,7 @@ const { entry, entries } = Astro.props as { entry: XEntry; entries: XEntry[] };
       data-x-bar
       class="sticky top-0 z-10 -mx-6 flex items-center gap-1 bg-canvas/90 px-6 py-2 font-sans text-sm leading-snug text-ink backdrop-blur"
     >
-      <a
-        href="/#x"
-        aria-label="홈으로 돌아가기"
-        class="-ml-2.5 grid size-10 flex-none place-items-center rounded-full transition-colors hover:bg-surface-strong"
-      >
-        <svg
-          aria-hidden="true"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7"></path>
-        </svg>
-      </a>
+      <BackLink href="/#x" label="홈으로 돌아가기" />
       <span class="font-semibold">X</span>
     </div>
 
