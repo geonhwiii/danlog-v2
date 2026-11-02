@@ -396,3 +396,31 @@ pre[data-theme] span {
 .code-copy__icon {
   display: inline-flex;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   X feed — rows open in place (<details>). Where the browser can
+   animate to `auto`, the panel slides open instead of jumping.
+   ────────────────────────────────────────────────────────────── */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  .x-item::details-content,
+  .x-more > details::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 0.3s ease,
+      content-visibility 0.3s allow-discrete;
+  }
+  .x-item[open]::details-content,
+  .x-more > details[open]::details-content {
+    block-size: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .x-item::details-content,
+  .x-more > details::details-content {
+    transition: none;
+  }
+}
