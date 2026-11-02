@@ -2,26 +2,28 @@
 import Layout from "../../layouts/Layout.astro";
 import Footer from "../../components/Footer.astro";
 import XThread from "../../components/x/XThread.astro";
-import { formatLongDate, getXEntries, summaryOf, type XEntry } from "@lib/x";
+import { getXEntries, summaryOf, type XEntry } from "@lib/x";
 
-// Opened from a home row: the chosen thread first, then every older one
-// stacked below it, so the page reads on like a feed.
+// Every X page is the whole feed, newest first; the page for a given entry
+// opens scrolled to that entry, the way a tapped post opens in X's timeline.
 export async function getStaticPaths() {
   const entries = await getXEntries();
-  return entries.map((entry, i) => ({ params: { id: entry.id }, props: { entry, following: entries.slice(i + 1) } }));
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry, entries } }));
 }
 
-const { entry, following } = Astro.props as { entry: XEntry; following: XEntry[] };
-const { post, date } = entry.data;
+const { entry, entries } = Astro.props as { entry: XEntry; entries: XEntry[] };
 ---
 
-<Layout title={`@${post.author.handle}의 X`} description={summaryOf(entry).slice(0, 140)}>
-  <main class="mx-auto max-w-[648px] px-6 pt-[clamp(24px,5vw,48px)] pb-14">
-    <div class="flex items-center gap-1 font-sans text-sm leading-snug text-muted">
+<Layout title={`@${entry.data.post.author.handle}의 X`} description={summaryOf(entry).slice(0, 140)}>
+  <main class="mx-auto max-w-[648px] px-6 pb-14">
+    <div
+      data-x-bar
+      class="sticky top-0 z-10 -mx-6 flex items-center gap-1 bg-canvas/90 px-6 py-2 font-sans text-sm leading-snug text-ink backdrop-blur"
+    >
       <a
         href="/#x"
         aria-label="홈으로 돌아가기"
-        class="-ml-2.5 grid size-10 flex-none place-items-center rounded-full text-ink transition-colors hover:bg-surface-strong"
+        class="-ml-2.5 grid size-10 flex-none place-items-center rounded-full transition-colors hover:bg-surface-strong"
       >
         <svg
           aria-hidden="true"
@@ -37,26 +39,74 @@ const { post, date } = entry.data;
           <path d="M19 12H5M12 19l-7-7 7-7"></path>
         </svg>
       </a>
-      <span class="flex gap-2">
-        <span>X</span>
-        <span aria-hidden="true">·</span>
-        <time datetime={date.toISOString()}>{formatLongDate(date)}</time>
-      </span>
+      <span class="font-semibold">X</span>
     </div>
 
-    <ol class="mt-4 flex flex-col gap-6">
-      <li>
-        <XThread entry={entry} />
-      </li>
+    <ol data-x-feed data-current={entry.id} class="mt-[clamp(8px,3vw,24px)] flex flex-col gap-6">
       {
-        following.map((next) => (
-          <li id={next.id} class="scroll-mt-6">
-            <XThread entry={next} />
+        entries.map((item) => (
+          <li id={item.id} aria-current={item.id === entry.id ? "true" : undefined}>
+            <XThread entry={item} />
           </li>
         ))
       }
     </ol>
 
     <Footer back={{ href: "/#x", label: "← 홈" }} />
+
+    {/* Runs during parsing, once the whole page is in, so the page is already at
+        the tapped entry on first paint. Position is kept as an anchor — which
+        entry is at the top and how far into it — not a pixel offset, because
+        heights above can still change (web fonts, cards rendered lazily). */}
+    <script is:inline>
+      (() => {
+        const feed = document.querySelector("[data-x-feed]");
+        const bar = document.querySelector("[data-x-bar]");
+        history.scrollRestoration = "manual";
+
+        const top = () => bar.offsetHeight + 12;
+        const anchorNow = () => {
+          const line = top();
+          const card = [...feed.children].find((li) => li.getBoundingClientRect().bottom > line) ?? feed.firstElementChild;
+          return { id: card.id, delta: line - card.getBoundingClientRect().top };
+        };
+        const pin = ({ id, delta }) => {
+          const card = document.getElementById(id);
+          if (card) window.scrollBy(0, card.getBoundingClientRect().top - (top() - delta));
+        };
+
+        // Back/forward and reload return to where the reader was; a fresh
+        // visit starts at the tapped entry.
+        const anchor = history.state?.xAnchor ?? { id: feed.dataset.current, delta: 0 };
+        pin(anchor);
+
+        // Re-pin while the layout settles, until the reader takes over.
+        const settle = new ResizeObserver(() => pin(anchor));
+        settle.observe(document.body);
+        const release = () => {
+          settle.disconnect();
+          for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) removeEventListener(type, release);
+        };
+        for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+          addEventListener(type, release, { passive: true });
+        }
+        document.fonts.ready.then(() => requestAnimationFrame(() => (pin(anchor), setTimeout(release, 500))));
+
+        // Remember the anchor once scrolling stops (and on leave) for restoring.
+        const save = () => history.replaceState({ ...history.state, xAnchor: anchorNow() }, "");
+        let timer = 0;
+        addEventListener("scroll", () => (clearTimeout(timer), (timer = setTimeout(save, 150))), { passive: true });
+        addEventListener("pagehide", save);
+      })();
+    </script>
   </main>
 </Layout>
+
+<style>
+  /* Cards off screen skip rendering — CSS's take on feed virtualization.
+     `auto` keeps each card's last measured height once it has been seen. */
+  [data-x-feed] > li:not([aria-current]) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 560px;
+  }
+</style>
