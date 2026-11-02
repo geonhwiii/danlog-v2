@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/Footer.astro";
+import HomePainting from "../components/HomePainting.astro";
 import { site } from "@shared/constants";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft && data.visible)).sort(
@@ -56,18 +57,13 @@ const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "
       <Footer />
     </main>
 
-    {
-      site.illustration && (
-        <aside class="sticky top-[clamp(40px,6vw,64px)] hidden flex-[0_0_340px] min-[960px]:block">
-          <img
-            src={site.illustration.src}
-            alt={site.illustration.alt}
-            width="340"
-            height="650"
-            class="block h-[650px] w-[340px] rounded-[14px] border border-hairline object-cover"
-          />
-        </aside>
-      )
-    }
+    <aside
+      class="home-visual sticky top-[clamp(40px,6vw,64px)] hidden flex-[0_0_340px] min-[960px]:block"
+      aria-hidden="true"
+    >
+      <div class="relative h-[650px] w-[340px] overflow-hidden rounded-[14px] border border-hairline bg-[#86b9e6]">
+        <HomePainting />
+      </div>
+    </aside>
   </div>
 </Layout>
