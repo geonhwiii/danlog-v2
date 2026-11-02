@@ -5,6 +5,7 @@ date: '04 21 2026'
 image: 'https://i.imgur.com/DpujWbM.png'
 tags:
   - AI
+visible: false
 ---
 
 ![](https://i.imgur.com/DpujWbM.png)

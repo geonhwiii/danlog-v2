@@ -4,6 +4,7 @@ description: vite의 rolldown 설정을 통해 빠른 번들사이즈를 최적�
 date: 09 20 2025
 tags:
   - vite
+visible: false
 ---
 
 > 참고문서 : https://rolldown.rs/guide/in-depth/advanced-chunks#advanced-chunks

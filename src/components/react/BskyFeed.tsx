@@ -44,7 +44,6 @@ function Feed({ listUri, limit = 30, maxAgeDays = 14, className }: BskyFeedProps
 
   useEffect(() => {
     const ctrl = new AbortController();
-    setStatus('loading');
     const cutoff = Date.now() - maxAgeDays * 86400 * 1000;
     getListFeed(listUri, limit, ctrl.signal)
       .then((feed) => {

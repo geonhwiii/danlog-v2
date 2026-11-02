@@ -5,6 +5,7 @@ date: '05 01 2024'
 image: 'https://tailwindcss.com/_next/static/media/card.a1cd9cff.jpg'
 tags:
   - CSS
+visible: false
 ---
 
 ![](https://tailwindcss.com/_next/static/media/card.a1cd9cff.jpg)

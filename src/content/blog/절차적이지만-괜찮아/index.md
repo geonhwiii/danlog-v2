@@ -4,6 +4,7 @@ description: 선언적 프로그래밍과 절차적 프로그래밍의 활용
 date: 09 10 2025
 tags:
   - Journal
+visible: false
 ---
 
 ![](https://i.imgur.com/vwrm5NC.jpeg)

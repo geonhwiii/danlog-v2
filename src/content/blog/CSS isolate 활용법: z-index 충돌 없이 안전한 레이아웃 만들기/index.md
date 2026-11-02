@@ -4,6 +4,7 @@ description: 'css isolation을 활용해서 z-index 충돌 없이 안전한 레�
 date: '03 12 2025'
 tags:
   - CSS
+visible: false
 ---
 
 ## 1. isolation

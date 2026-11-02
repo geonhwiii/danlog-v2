@@ -19,6 +19,14 @@ const rehypePrettyCodeOptions = {
 // https://astro.build/config
 export default defineConfig({
   site: 'https://danlog.vercel.app',
+  // The home page is the post list now. Hidden sections (pages prefixed with
+  // `_` in src/pages) send old links home instead of 404ing.
+  redirects: {
+    '/blog': '/',
+    '/profile': '/',
+    '/feed': '/',
+    '/translation': '/',
+  },
   integrations: [
     react(),
     mdx(),

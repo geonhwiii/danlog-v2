@@ -4,6 +4,7 @@ description: 'monorepo로 expo 앱 개발하기'
 date: '12 30 2024'
 tags:
   - React Native
+visible: false
 ---
 
 모바일 앱을 개인프로젝트로 `expo`로 혼자서 개발하고 있던 중,

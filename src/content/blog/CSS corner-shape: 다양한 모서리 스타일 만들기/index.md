@@ -4,6 +4,7 @@ description: 'CSS corner-shape 속성을 사용해 squircle, bevel, notch 등 �
 date: '11 20 2025'
 tags:
   - CSS
+visible: false
 ---
 
 ## 1. corner-shape란?

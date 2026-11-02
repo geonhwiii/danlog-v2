@@ -11,6 +11,8 @@ const blog = defineCollection({
     image: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    // false면 목록·라우트·RSS·검색에서 빠지고 파일만 보관된다.
+    visible: z.boolean().default(true),
   }),
 });
 

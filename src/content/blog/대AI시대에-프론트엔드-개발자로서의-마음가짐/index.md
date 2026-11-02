@@ -4,6 +4,7 @@ description: AI의 빠른 발전 속에서 프론트엔드 개발자로서의 �
 date: 07 14 2025
 tags:
   - Journal
+visible: false
 ---
 
 요새 업무도 바쁘고, 하는 일도 많아서 정신이 없습니다.

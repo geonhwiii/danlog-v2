@@ -26,7 +26,7 @@
 
 - **Astro** — 정적 사이트 생성, 콘텐츠 컬렉션 기반 블로그
 - **React** — 커스텀 컴포넌트
-- **Tailwind CSS v4** — 디자인 토큰 기반 스타일링 (라이트/다크 테마)
+- **Tailwind CSS v4** — 디자인 토큰 기반 스타일링 (라이트/다크는 OS 설정을 따름)
 - **MDX** + rehype-pretty-code — 마크다운 글 작성, 코드 하이라이팅
 - **bun** — 패키지 매니저 / 런타임
 - **oxlint · oxfmt** — 린트 / 포매팅
@@ -46,12 +46,12 @@
 
 ```text
 src/
-├── components/        # Astro 컴포넌트 + react/ (검색, 테마 토글 등)
+├── components/        # Astro 컴포넌트 + react/ (MDX용 Alert·Image·Video 등)
 ├── content/blog/      # 블로그 글 (Markdown / MDX)
 ├── layouts/           # 공통 레이아웃
 ├── lib/               # 유틸 (markdown 헬퍼 등)
-├── pages/             # 라우트 (블로그, 프로필, robots.txt, sitemap 등)
-├── shared/constants/  # 랜딩·프로필 콘텐츠 상수
+├── pages/             # 라우트 (홈, 글, rss, robots.txt). `_`로 시작하는 파일은 라우트에서 제외된 보관본
+├── shared/constants/  # 사이트 정보(site.ts)·프로필 콘텐츠 상수
 └── styles/            # 전역 CSS / 디자인 토큰
 ```
 
@@ -65,5 +65,6 @@ title: '제목'
 description: '한 줄 설명'
 date: 2026-01-01
 tags: ['React', 'TypeScript']
+visible: true # false면 목록·라우트·RSS에서 숨김 (기본값 true)
 ---
 ```

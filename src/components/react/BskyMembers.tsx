@@ -14,7 +14,6 @@ export default function BskyMembers({ listUri, className }: BskyMembersProps) {
 
   useEffect(() => {
     const ctrl = new AbortController();
-    setStatus('loading');
     getListMembers(listUri, 50, ctrl.signal)
       .then((list) => {
         setMembers(list);

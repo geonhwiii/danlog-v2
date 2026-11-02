@@ -6,7 +6,7 @@ import { toYmd } from '@lib/markdown';
 // emitted as /search-index.json and fetched client-side by the search palette.
 export const GET: APIRoute = async () => {
   const [blogPosts, translationPosts] = await Promise.all([
-    getCollection('blog', ({ data }) => !data.draft),
+    getCollection('blog', ({ data }) => !data.draft && data.visible),
     getCollection('translation', ({ data }) => !data.draft),
   ]);
 
