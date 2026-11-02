@@ -4,13 +4,14 @@ import Footer from "../../components/Footer.astro";
 import XThread from "../../components/x/XThread.astro";
 import { formatLongDate, getXEntries, summaryOf, type XEntry } from "@lib/x";
 
-// Share link for a single X entry. On the home page the same thread opens in place.
+// Opened from a home row: the chosen thread first, then every older one
+// stacked below it, so the page reads on like a feed.
 export async function getStaticPaths() {
   const entries = await getXEntries();
-  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+  return entries.map((entry, i) => ({ params: { id: entry.id }, props: { entry, following: entries.slice(i + 1) } }));
 }
 
-const { entry } = Astro.props as { entry: XEntry };
+const { entry, following } = Astro.props as { entry: XEntry; following: XEntry[] };
 const { post, date } = entry.data;
 ---
 
@@ -43,9 +44,18 @@ const { post, date } = entry.data;
       </span>
     </div>
 
-    <div class="mt-4">
-      <XThread entry={entry} />
-    </div>
+    <ol class="mt-4 flex flex-col gap-6">
+      <li>
+        <XThread entry={entry} />
+      </li>
+      {
+        following.map((next) => (
+          <li id={next.id} class="scroll-mt-6">
+            <XThread entry={next} />
+          </li>
+        ))
+      }
+    </ol>
 
     <Footer back={{ href: "/#x", label: "← 홈" }} />
   </main>

@@ -26,8 +26,75 @@ const { back } = Astro.props;
       </span>
     )
   }
-  <span class="flex gap-4">
+  <span class="flex items-center gap-4">
     <a href="/rss.xml">RSS</a>
     <a href={site.githubUrl}>GitHub</a>
+    <button
+      type="button"
+      data-theme-toggle
+      aria-label="다크 모드로 전환"
+      class="-m-1.5 grid size-7 cursor-pointer place-items-center rounded-full transition-colors hover:bg-surface-strong hover:text-ink"
+    >
+      {/* Moon in light mode, sun in dark mode — swapped by CSS so the right
+          icon shows before any script runs. */}
+      <svg
+        aria-hidden="true"
+        class="theme-icon-moon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path>
+      </svg>
+      <svg
+        aria-hidden="true"
+        class="theme-icon-sun"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2m-7.07-14.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+    </button>
   </span>
 </footer>
+
+<style>
+  .theme-icon-sun,
+  :global(:root[data-theme="dark"]) .theme-icon-moon {
+    display: none;
+  }
+  :global(:root[data-theme="dark"]) .theme-icon-sun {
+    display: block;
+  }
+</style>
+
+<script>
+  // Flip and pin the theme. The pre-paint script in Layout reads the same key.
+  const root = document.documentElement;
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
+    const sync = () => {
+      button.ariaLabel = root.dataset.theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
+    };
+    sync();
+    new MutationObserver(sync).observe(root, { attributeFilter: ["data-theme"] });
+    button.addEventListener("click", () => {
+      const next = root.dataset.theme === "dark" ? "light" : "dark";
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {}
+    });
+  }
+</script>
