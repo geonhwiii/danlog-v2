@@ -17,45 +17,34 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Design tokens — see DESIGN.md. Light by default; dark follows
-   the OS setting (no toggle).
+   Design tokens — see DESIGN.md. Each token is light-dark(light, dark):
+   the OS setting decides, unless the footer toggle pinned a theme via
+   <html data-theme> (set before paint in Layout).
    ────────────────────────────────────────────────────────────── */
 :root {
   color-scheme: light dark;
 
-  --color-canvas: #ffffff;
-  --color-canvas-soft: #fafaf8;
-  --color-surface-card: #ffffff;
-  --color-surface-strong: #efeee9;
+  --color-canvas: light-dark(#ffffff, #1b1a19);
+  --color-canvas-soft: light-dark(#fafaf8, #1f1e1c);
+  --color-surface-card: light-dark(#ffffff, #232220);
+  --color-surface-strong: light-dark(#efeee9, #2a2826);
 
-  --color-hairline: #e7e6e2;
-  --color-hairline-soft: #f0efeb;
-  --color-hairline-strong: #d3d1cb;
+  --color-hairline: light-dark(#e7e6e2, #34322f);
+  --color-hairline-soft: light-dark(#f0efeb, #2a2826);
+  --color-hairline-strong: light-dark(#d3d1cb, #45423e);
 
-  --color-ink: #1a1a19;
-  --color-body: #2b2b29;
-  --color-muted: #6f6e6a;
-  --color-muted-soft: #77756f;
-  --color-link: #64635f;
+  --color-ink: light-dark(#1a1a19, #f3f0ea);
+  --color-body: light-dark(#2b2b29, #e2ded6);
+  --color-muted: light-dark(#6f6e6a, #a29e96);
+  --color-muted-soft: light-dark(#77756f, #969188);
+  --color-link: light-dark(#64635f, #b3aea6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #1b1a19;
-    --color-canvas-soft: #1f1e1c;
-    --color-surface-card: #232220;
-    --color-surface-strong: #2a2826;
-
-    --color-hairline: #34322f;
-    --color-hairline-soft: #2a2826;
-    --color-hairline-strong: #45423e;
-
-    --color-ink: #f3f0ea;
-    --color-body: #e2ded6;
-    --color-muted: #a29e96;
-    --color-muted-soft: #969188;
-    --color-link: #b3aea6;
-  }
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 /* Map tokens into Tailwind's theme so utilities like `bg-canvas`,
@@ -326,30 +315,22 @@ figure[data-rehype-pretty-code-figure]:has(.code-header) pre {
   padding-inline: 1rem;
 }
 
-/* Light theme colors (default). Background only on the pre — spans get
-   color only, so highlighted-line backgrounds aren't overridden. */
+/* Code themes. Background only on the pre — spans get color only, so
+   highlighted-line backgrounds aren't overridden. */
 pre[data-theme] {
-  background-color: var(--shiki-light-bg);
+  background-color: light-dark(var(--shiki-light-bg), var(--shiki-dark-bg));
 }
 pre[data-theme],
 pre[data-theme] span {
-  color: var(--shiki-light);
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
   font-style: var(--shiki-light-font-style);
   font-weight: var(--shiki-light-font-weight);
   text-decoration: var(--shiki-light-text-decoration);
 }
-
-@media (prefers-color-scheme: dark) {
-  pre[data-theme] {
-    background-color: var(--shiki-dark-bg);
-  }
-  pre[data-theme],
-  pre[data-theme] span {
-    color: var(--shiki-dark);
-    font-style: var(--shiki-dark-font-style);
-    font-weight: var(--shiki-dark-font-weight);
-    text-decoration: var(--shiki-dark-text-decoration);
-  }
+:root[data-theme='dark'] :is(pre[data-theme], pre[data-theme] span) {
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
 }
 
 /* Highlighted lines ({1,5-7}) */
@@ -398,14 +379,13 @@ pre[data-theme] span {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   X feed — rows open in place (<details>). Where the browser can
-   animate to `auto`, the panel slides open instead of jumping.
+   X feed — "더 보기" opens the next rows in place (<details>). Where
+   the browser can animate to `auto`, it slides open instead of jumping.
    ────────────────────────────────────────────────────────────── */
 @supports (interpolate-size: allow-keywords) {
   :root {
     interpolate-size: allow-keywords;
   }
-  .x-item::details-content,
   .x-more > details::details-content {
     block-size: 0;
     overflow-y: clip;
@@ -413,13 +393,11 @@ pre[data-theme] span {
       block-size 0.3s ease,
       content-visibility 0.3s allow-discrete;
   }
-  .x-item[open]::details-content,
   .x-more > details[open]::details-content {
     block-size: auto;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .x-item::details-content,
   .x-more > details::details-content {
     transition: none;
   }
