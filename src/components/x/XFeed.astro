@@ -1,0 +1,32 @@
+---
+import type { XEntry } from "@lib/x";
+import XFeedItem from "./XFeedItem.astro";
+
+interface Props {
+  entries: XEntry[];
+  /** How many items each "더 보기" reveals. */
+  size?: number;
+}
+
+// Renders `size` items, then a "더 보기" that opens the next batch right below —
+// nested so the feed keeps extending like an X timeline, with no JS.
+const { entries, size = 3 } = Astro.props;
+const head = entries.slice(0, size);
+const rest = entries.slice(size);
+---
+
+{head.map((entry) => <XFeedItem entry={entry} />)}
+{
+  rest.length > 0 && (
+    <li class="x-more">
+      <details class="group">
+        <summary class="flex cursor-pointer list-none justify-center py-4 font-sans text-sm text-muted transition-colors group-open:hidden hover:text-ink [&::-webkit-details-marker]:hidden">
+          더 보기
+        </summary>
+        <ol>
+          <Astro.self entries={rest} size={size} />
+        </ol>
+      </details>
+    </li>
+  )
+}

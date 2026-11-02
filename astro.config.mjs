@@ -26,6 +26,8 @@ export default defineConfig({
     '/profile': '/',
     '/feed': '/',
     '/translation': '/',
+    // X entries open in place on the home page; only /x/<id> share links remain.
+    '/x': '/#x',
   },
   integrations: [
     react(),

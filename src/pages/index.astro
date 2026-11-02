@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/Footer.astro";
 import HomePainting from "../components/HomePainting.astro";
-import XRow from "../components/x/XRow.astro";
+import XFeed from "../components/x/XFeed.astro";
 import { site } from "@shared/constants";
 import { getXEntries } from "@lib/x";
 
@@ -27,19 +27,12 @@ const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "
 
       {
         xEntries.length > 0 && (
-          <section class="mt-20" aria-labelledby="x-heading">
-            <div class="mb-5 flex items-baseline justify-between">
-              <h2 id="x-heading" class="text-[24px] leading-snug font-semibold text-ink">
-                X
-              </h2>
-              <a href="/x" class="font-sans text-sm text-muted">
-                전체 보기
-              </a>
-            </div>
+          <section id="x" class="mt-20 scroll-mt-8" aria-labelledby="x-heading">
+            <h2 id="x-heading" class="mb-5 text-[24px] leading-snug font-semibold text-ink">
+              X
+            </h2>
             <ol class="border-t border-hairline">
-              {xEntries.slice(0, 3).map((entry) => (
-                <XRow entry={entry} />
-              ))}
+              <XFeed entries={xEntries} size={3} />
             </ol>
           </section>
         )
