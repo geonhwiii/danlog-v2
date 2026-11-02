@@ -183,14 +183,25 @@ function sky(rng: Rng): string {
   );
 }
 
+/**
+ * Each cloud drifts on its own: `drift` is how far it wanders (viewBox units,
+ * negative = starts leftward), `dur` one sweep in seconds. Fixed rather than
+ * random so the rest of the seeded scene stays the same.
+ */
 function clouds(rng: Rng): string {
-  return [
-    cloud(rng, 150, 240, 230),
-    cloud(rng, 600, 150, 260),
-    cloud(rng, 520, 380, 170),
-    cloud(rng, 120, 905, 210),
-    cloud(rng, 650, 890, 240),
-  ].join('');
+  const sky: [cx: number, cy: number, w: number, drift: number, dur: number][] = [
+    [150, 240, 230, 48, 26],
+    [600, 150, 260, -60, 34],
+    [520, 380, 170, 40, 21],
+    [120, 905, 210, 52, 29],
+    [650, 890, 240, -44, 24],
+  ];
+  return sky
+    .map(
+      ([cx, cy, w, drift, dur], i) =>
+        `<g class="painting-cloud" style="--drift:${drift}px;--dur:${dur}s;--delay:-${(i * 7) % dur}s">${cloud(rng, cx, cy, w)}</g>`,
+    )
+    .join('');
 }
 
 /** Namsan hill outline height at x (approximates the drawn curve). */
