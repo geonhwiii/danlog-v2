@@ -16,26 +16,29 @@ const { entry, entries } = Astro.props as { entry: XEntry; entries: XEntry[] };
 ---
 
 <Layout title={`@${entry.data.post.author.handle}의 X`} description={summaryOf(entry).slice(0, 140)}>
-  <main class="mx-auto max-w-[648px] px-6 pb-14">
+  {/* X's timeline column: 600px, ruled left and right once there is room. */}
+  <main class="mx-auto min-h-dvh max-w-[600px] border-hairline min-[600px]:border-x">
     <div
       data-x-bar
-      class="sticky top-0 z-10 -mx-6 flex items-center gap-1 bg-canvas/90 px-6 py-2 font-sans text-sm leading-snug text-ink backdrop-blur"
+      class="sticky top-0 z-10 flex h-[53px] items-center gap-5 border-b border-hairline bg-canvas/85 px-4 font-sans text-ink backdrop-blur-md"
     >
       <BackLink href="/#x" label="홈으로 돌아가기" />
-      <span class="font-semibold">X</span>
+      <span class="text-[19px] leading-6 font-bold">X</span>
     </div>
 
-    <ol data-x-feed data-current={entry.id} class="mt-[clamp(8px,3vw,24px)] flex flex-col gap-6">
+    <ol data-x-feed data-current={entry.id}>
       {
         entries.map((item) => (
-          <li id={item.id} aria-current={item.id === entry.id ? "true" : undefined}>
+          <li id={item.id} aria-current={item.id === entry.id ? "true" : undefined} class="border-b border-hairline">
             <XThread entry={item} />
           </li>
         ))
       }
     </ol>
 
-    <Footer back={{ href: "/#x", label: "← 홈" }} />
+    <div class="px-4 pb-10">
+      <Footer back={{ href: "/#x", label: "← 홈" }} />
+    </div>
 
     {/* Runs during parsing, once the whole page is in, so the page is already at
         the tapped entry on first paint. Position is kept as an anchor — which
@@ -47,7 +50,7 @@ const { entry, entries } = Astro.props as { entry: XEntry; entries: XEntry[] };
         const bar = document.querySelector("[data-x-bar]");
         history.scrollRestoration = "manual";
 
-        const top = () => bar.offsetHeight + 12;
+        const top = () => bar.offsetHeight;
         const anchorNow = () => {
           const line = top();
           const card = [...feed.children].find((li) => li.getBoundingClientRect().bottom > line) ?? feed.firstElementChild;
@@ -90,6 +93,6 @@ const { entry, entries } = Astro.props as { entry: XEntry; entries: XEntry[] };
      `auto` keeps each card's last measured height once it has been seen. */
   [data-x-feed] > li:not([aria-current]) {
     content-visibility: auto;
-    contain-intrinsic-size: auto 560px;
+    contain-intrinsic-size: auto 520px;
   }
 </style>

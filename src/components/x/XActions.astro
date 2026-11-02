@@ -1,0 +1,39 @@
+---
+// X's action bar, drawn as quiet decoration only — no counts are saved, and
+// nothing here is interactive, so it is hidden from assistive tech.
+const icons = {
+  reply: ["M7.9 20A9 9 0 1 0 4 16.1L2 22Z"],
+  repost: ["m2 9 3-3 3 3", "M13 18H7a2 2 0 0 1-2-2V6", "m22 15-3 3-3-3", "M11 6h6a2 2 0 0 1 2 2v10"],
+  like: [
+    "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+  ],
+  views: ["M18 20V10", "M12 20V4", "M6 20v-6"],
+  bookmark: ["m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"],
+  share: ["M12 2v13", "m16 6-4-4-4 4", "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"],
+};
+const left = [icons.reply, icons.repost, icons.like, icons.views];
+const right = [icons.bookmark, icons.share];
+---
+
+<div aria-hidden="true" class="-ml-2 mt-3 flex items-center justify-between text-muted">
+  {
+    left.map((paths) => (
+      <span class="grid size-[34px] place-items-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          {paths.map((d) => <path d={d} />)}
+        </svg>
+      </span>
+    ))
+  }
+  <span class="-mr-2 flex">
+    {
+      right.map((paths) => (
+        <span class="grid size-[34px] place-items-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            {paths.map((d) => <path d={d} />)}
+          </svg>
+        </span>
+      ))
+    }
+  </span>
+</div>

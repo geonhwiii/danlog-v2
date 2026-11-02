@@ -1,0 +1,74 @@
+---
+import { formatLongDate, formatShortDate } from "@lib/x";
+import XActions from "./XActions.astro";
+import XLogo from "./XLogo.astro";
+
+interface Props {
+  avatar: string;
+  name: string;
+  /** Without the leading @. */
+  handle: string;
+  verified?: boolean;
+  date: Date;
+  /** The original post on X — linked from the date and the X mark. */
+  url?: string;
+  /** Draw the thread line down to the next row, like an X self-thread. */
+  threaded?: boolean;
+}
+
+// One timeline row in X's layout: avatar column on the left (with the thread
+// line), name · @handle · date on one line, then the body from the slot.
+const { avatar, name, handle, verified = false, date, url, threaded = false } = Astro.props;
+---
+
+<div class="grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 px-4 pt-3">
+  <div class="flex flex-col items-center">
+    <img src={avatar} alt="" width="40" height="40" class="size-10 flex-none rounded-full bg-surface-strong" />
+    {threaded && <span aria-hidden="true" class="mt-1 w-0.5 flex-1 bg-hairline-strong" />}
+  </div>
+
+  <div class:list={["min-w-0 font-sans", threaded ? "pb-3" : "pb-1"]}>
+    <header class="flex items-center gap-1 text-[15px] leading-5">
+      <span class="truncate font-bold text-ink">{name}</span>
+      {
+        verified && (
+          <svg role="img" aria-label="인증된 계정" width="18" height="18" viewBox="0 0 24 24" class="flex-none text-[#1d9bf0]">
+            <path
+              d="M12 1.8l2.4 1.8 3-.2 1 2.8 2.6 1.6-.6 2.9 1.4 2.6-2 2.2-.1 3-2.9.8-1.6 2.6-2.9-.6L12 22.2l-2.4-1.8-2.9.6-1.6-2.6-2.9-.8-.1-3-2-2.2 1.4-2.6-.6-2.9 2.6-1.6 1-2.8 3 .2z"
+              fill="currentColor"
+            />
+            <path d="M8 12.2l2.7 2.7L16.4 9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        )
+      }
+      <span class="flex min-w-0 items-center gap-1 text-muted">
+        <span class="truncate">@{handle}</span>
+        <span aria-hidden="true">·</span>
+        {
+          url ? (
+            <a href={url} class="flex-none text-muted no-underline hover:underline">
+              <time datetime={date.toISOString()} title={formatLongDate(date)}>{formatShortDate(date)}</time>
+            </a>
+          ) : (
+            <time datetime={date.toISOString()} title={formatLongDate(date)} class="flex-none">
+              {formatShortDate(date)}
+            </time>
+          )
+        }
+      </span>
+      {
+        url && (
+          <a href={url} aria-label="X에서 원글 보기" class="-my-1 -mr-1.5 ml-auto grid size-8 flex-none place-items-center rounded-full text-muted transition-colors hover:bg-surface-strong hover:text-ink">
+            <XLogo size={15} />
+          </a>
+        )
+      }
+    </header>
+
+    <div class="mt-0.5 text-[15px] leading-5 text-ink">
+      <slot />
+    </div>
+
+    <XActions />
+  </div>
+</div>
