@@ -15,7 +15,10 @@ const xEntries = await getXEntries();
 const formatMonth = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" }).format;
 ---
 
-<Layout>
+<Layout
+  title="프론트엔드 개발자 Dan"
+  description="프론트엔드 개발자 Dan의 개인 블로그입니다. React와 TypeScript, 읽기 쉬운 코드와 유연한 설계, AI 도구를 활용한 개발 경험을 기록합니다. 직접 배운 내용과 실무에서 고민한 주제, 함께 읽고 싶은 글을 공유합니다."
+>
   <div
     class="mx-auto flex max-w-[1200px] items-start justify-center gap-[clamp(48px,9vw,120px)] px-6 pt-[clamp(40px,6vw,64px)] pb-14"
   >
