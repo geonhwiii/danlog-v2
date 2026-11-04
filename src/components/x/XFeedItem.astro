@@ -20,7 +20,7 @@ const { entry } = Astro.props;
         <XLogo size={11} />
         <span>@{entry.data.post.author.handle}</span>
         <span aria-hidden="true">·</span>
-        <time datetime={entry.data.date.toISOString()}>{formatShortDate(entry.data.date)}</time>
+        <time datetime={entry.data.post.createdAt.toISOString()}>{formatShortDate(entry.data.post.createdAt)}</time>
       </span>
     </span>
     <svg

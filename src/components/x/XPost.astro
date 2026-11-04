@@ -22,9 +22,34 @@ const { author } = post;
   url={post.url}
   threaded={threaded}
 >
-  <p class="whitespace-pre-line [overflow-wrap:anywhere]">
-    {linkify(post.text).map((s) => (s.href ? <a href={s.href} class="text-[#1d9bf0] no-underline hover:underline">{s.text}</a> : s.text))}
-  </p>
+  {
+    post.textKo ? (
+      <x-post-language class="block">
+        <button
+          type="button"
+          hidden
+          aria-pressed="false"
+          aria-controls={`x-text-${post.id}`}
+          class="mb-1.5 cursor-pointer text-left text-[13px] leading-5 text-muted underline-offset-2 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        >
+          원문 언어 영어
+        </button>
+        <div id={`x-text-${post.id}`}>
+          <p lang="ko" class="whitespace-pre-line [overflow-wrap:anywhere]">
+            {linkify(post.textKo).map((s) => (s.href ? <a href={s.href} class="text-[#1d9bf0] no-underline hover:underline">{s.text}</a> : s.text))}
+          </p>
+          <p lang="en" hidden class="whitespace-pre-line [overflow-wrap:anywhere]">
+            {linkify(post.text).map((s) => (s.href ? <a href={s.href} class="text-[#1d9bf0] no-underline hover:underline">{s.text}</a> : s.text))}
+          </p>
+        </div>
+        <noscript><a href={post.url} class="text-[13px] text-muted underline">영어 원문 보기</a></noscript>
+      </x-post-language>
+    ) : (
+      <p class="whitespace-pre-line [overflow-wrap:anywhere]">
+        {linkify(post.text).map((s) => (s.href ? <a href={s.href} class="text-[#1d9bf0] no-underline hover:underline">{s.text}</a> : s.text))}
+      </p>
+    )
+  }
 
   {
     post.media.slice(0, 4).map((m) => (
@@ -51,3 +76,25 @@ const { author } = post;
     ))
   }
 </XRow>
+
+<script>
+  class XPostLanguage extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector('button');
+      const translated = this.querySelector<HTMLElement>('[lang="ko"]');
+      const original = this.querySelector<HTMLElement>('[lang="en"]');
+      if (!button || !translated || !original) return;
+
+      button.hidden = false;
+      button.onclick = () => {
+        const showOriginal = original.hidden;
+        translated.hidden = showOriginal;
+        original.hidden = !showOriginal;
+        button.setAttribute('aria-pressed', String(showOriginal));
+        button.textContent = showOriginal ? '한국어 번역 보기' : '원문 언어 영어';
+      };
+    }
+  }
+
+  if (!customElements.get('x-post-language')) customElements.define('x-post-language', XPostLanguage);
+</script>

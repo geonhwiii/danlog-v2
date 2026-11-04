@@ -39,6 +39,7 @@ const x = defineCollection({
       id: z.string(),
       url: z.string().url(),
       text: z.string(),
+      textKo: z.string().min(1).optional(),
       createdAt: z.coerce.date(),
       author: z.object({
         name: z.string(),

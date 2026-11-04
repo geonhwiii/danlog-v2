@@ -3,8 +3,11 @@
 //   bun run x:add https://x.com/<handle>/status/<id>
 //
 // Uses X's public embed (syndication) endpoint — the same one react-tweet uses.
+// Long posts and linked X articles need FxTwitter for their complete text.
 // It is unofficial, so the post is fetched once and stored in the repo rather
 // than at build time. Add your thoughts under `replies` afterwards.
+
+import { z } from 'astro/zod';
 
 const input = process.argv[2];
 const id = input?.match(/(\d{5,})\/?$/)?.[1] ?? input?.match(/status\/(\d+)/)?.[1];
@@ -31,6 +34,7 @@ interface SyndicationPost {
   text: string;
   created_at: string;
   display_text_range: [number, number];
+  note_tweet?: { id: string };
   entities?: { urls?: { url: string; expanded_url: string }[] };
   user: {
     name: string;
@@ -52,9 +56,64 @@ const data = (await res.json()) as SyndicationPost;
 const [start, end] = data.display_text_range;
 let text = Array.from(data.text).slice(start, end).join('').trim();
 for (const u of data.entities?.urls ?? []) text = text.replaceAll(u.url, u.expanded_url);
+const media = (data.mediaDetails ?? []).map((m) => ({
+  type: m.type === 'photo' ? 'photo' : 'video',
+  src: m.media_url_https,
+  width: m.original_info.width,
+  height: m.original_info.height,
+}));
+const articleUrl = text.match(/https?:\/\/(?:www\.)?(?:x|twitter)\.com\/i\/article\/\d+/)?.[0];
+
+if (data.note_tweet || articleUrl) {
+  const fullRes = await fetch(`https://api.fxtwitter.com/${data.user.screen_name}/status/${id}`);
+  if (!fullRes.ok) throw new Error(`full post fetch failed (${fullRes.status}); snapshot not saved`);
+  const articleMedia = z.object({
+    media_info: z.object({
+      original_img_url: z.string().url(),
+      original_img_width: z.number().positive(),
+      original_img_height: z.number().positive(),
+    }),
+  });
+  const { tweet } = z
+    .object({
+      tweet: z.object({
+        id: z.literal(id),
+        text: z.string().min(1),
+        article: z
+          .object({
+            title: z.string().min(1),
+            content: z.object({ blocks: z.array(z.object({ text: z.string() })).min(1) }),
+            cover_media: articleMedia.optional(),
+            media_entities: z.array(articleMedia).default([]),
+          })
+          .optional(),
+      }),
+    })
+    .parse(await fullRes.json());
+
+  if (articleUrl) {
+    const article = tweet.article;
+    const paragraphs = article?.content.blocks.map((block) => block.text).filter((text) => text.trim());
+    if (!article || !paragraphs?.length) throw new Error('article body missing; snapshot not saved');
+    const introduction = text.replace(articleUrl, '').trim();
+    text = [introduction, article.title, ...paragraphs, articleUrl].filter(Boolean).join('\n\n');
+    for (const item of [article.cover_media, ...article.media_entities]) {
+      if (!item || media.some((m) => m.src === item.media_info.original_img_url)) continue;
+      media.push({
+        type: 'photo',
+        src: item.media_info.original_img_url,
+        width: item.media_info.original_img_width,
+        height: item.media_info.original_img_height,
+      });
+    }
+  } else {
+    if (tweet.text.length <= text.length) throw new Error('full post text incomplete; snapshot not saved');
+    text = tweet.text;
+  }
+}
 
 const entry = {
-  date: new Date().toISOString().slice(0, 10),
+  date: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date()),
   post: {
     id: data.id_str,
     url: `https://x.com/${data.user.screen_name}/status/${data.id_str}`,
@@ -66,12 +125,7 @@ const entry = {
       avatar: data.user.profile_image_url_https.replace('_normal.', '_bigger.'),
       verified: Boolean(data.user.is_blue_verified || data.user.verified),
     },
-    media: (data.mediaDetails ?? []).map((m) => ({
-      type: m.type === 'photo' ? 'photo' : 'video',
-      src: m.media_url_https,
-      width: m.original_info.width,
-      height: m.original_info.height,
-    })),
+    media,
   },
   replies: [] as { date: string; text: string }[],
 };
